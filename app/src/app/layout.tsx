@@ -19,21 +19,50 @@ const pretendard = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "운빨 - 오늘 운 테스트해봐",
-  description: "주사위, 동전, 카드로 오늘의 운빨을 테스트하고, AI와 가위바위보 대결을 해보세요!",
-  keywords: ["운빨", "운 테스트", "가위바위보", "주사위", "운세"],
+  title: {
+    default: "운빨 - 운빨로 놀자!",
+    template: "%s | 운빨",
+  },
+  description: "주사위 굴리기, 폭탄 피하기, 강화 시뮬레이터, AI 가위바위보까지! 다양한 운빨 게임으로 오늘의 운을 테스트해보세요.",
+  keywords: ["운빨", "운 테스트", "가위바위보", "주사위", "폭탄 피하기", "강화 시뮬레이터", "운세", "럭키 게임", "미니게임"],
+  authors: [{ name: "운빨" }],
+  creator: "운빨",
+  metadataBase: new URL("https://unbbal.gg"),
   openGraph: {
-    title: "운빨 - 오늘 운 테스트해봐",
-    description: "주사위, 동전, 카드로 오늘의 운빨을 테스트하고, AI와 가위바위보 대결을 해보세요!",
+    title: "운빨 - 운빨로 놀자!",
+    description: "주사위 굴리기, 폭탄 피하기, 강화 시뮬레이터, AI 가위바위보까지! 다양한 운빨 게임으로 오늘의 운을 테스트해보세요.",
     url: "https://unbbal.gg",
     siteName: "운빨",
     locale: "ko_KR",
     type: "website",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "운빨 - 운빨로 놀자!",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "운빨 - 오늘 운 테스트해봐",
-    description: "주사위, 동전, 카드로 오늘의 운빨을 테스트해보세요!",
+    title: "운빨 - 운빨로 놀자!",
+    description: "주사위, 폭탄 피하기, 강화, AI 가위바위보로 운빨 테스트!",
+    images: ["/og-image.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    google: "", // Google Search Console 인증 코드
   },
 };
 
