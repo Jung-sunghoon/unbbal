@@ -216,26 +216,31 @@ export function DiceRoll({ rollCount, currentRoll, totalSum, rolls, onRoll, onCo
         {/* 굴리기 버튼 */}
         <div className="h-12">
           {!isFinished ? (
-            <Button
-              onClick={handleRoll}
-              disabled={isRolling || isComplete}
-              size="lg"
-              className="w-full bg-[var(--luck-primary)] hover:bg-[var(--luck-primary)]/90"
+            <motion.div
+              whileHover={!isRolling && !isComplete ? { scale: 1.02 } : {}}
+              whileTap={!isRolling && !isComplete ? { scale: 0.98 } : {}}
             >
-              {isRolling ? (
-                <span className="flex items-center gap-2">
-                  <motion.span
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 0.5, repeat: Infinity, ease: "linear" }}
-                  >
-                    🎲
-                  </motion.span>
-                  굴리는 중...
-                </span>
-              ) : (
-                `굴리기 (${10 - rollCount}회 남음)`
-              )}
-            </Button>
+              <Button
+                onClick={handleRoll}
+                disabled={isRolling || isComplete}
+                size="lg"
+                className="w-full bg-[var(--luck-primary)] hover:bg-[var(--luck-primary)]/90 hover:shadow-lg transition-all duration-200"
+              >
+                {isRolling ? (
+                  <span className="flex items-center gap-2">
+                    <motion.span
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 0.5, repeat: Infinity, ease: "linear" }}
+                    >
+                      🎲
+                    </motion.span>
+                    굴리는 중...
+                  </span>
+                ) : (
+                  `굴리기 (${10 - rollCount}회 남음)`
+                )}
+              </Button>
+            </motion.div>
           ) : (
             <motion.div
               initial={{ opacity: 0, y: 10 }}

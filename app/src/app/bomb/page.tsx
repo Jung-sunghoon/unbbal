@@ -98,13 +98,19 @@ export default function BombPage() {
               </div>
             </div>
 
-            <Button
-              onClick={handleStart}
-              size="lg"
-              className="w-full bg-red-500 hover:bg-red-600"
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full"
             >
-              폭탄 해제 시작!
-            </Button>
+              <Button
+                onClick={handleStart}
+                size="lg"
+                className="w-full bg-red-500 hover:bg-red-600 hover:shadow-lg transition-all duration-200"
+              >
+                폭탄 해제 시작!
+              </Button>
+            </motion.div>
           </motion.div>
         )}
 

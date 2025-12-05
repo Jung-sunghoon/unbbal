@@ -95,13 +95,19 @@ export default function RPSPage() {
               </p>
             </div>
 
-            <Button
-              onClick={startGame}
-              size="lg"
-              className="w-full bg-[var(--rps-primary)] hover:bg-[var(--rps-primary)]/90"
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full"
             >
-              도전 시작
-            </Button>
+              <Button
+                onClick={startGame}
+                size="lg"
+                className="w-full bg-[var(--rps-primary)] hover:bg-[var(--rps-primary)]/90 hover:shadow-lg transition-all duration-200"
+              >
+                도전 시작
+              </Button>
+            </motion.div>
           </motion.div>
         )}
 
@@ -123,12 +129,14 @@ export default function RPSPage() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 className="flex justify-center"
               >
                 <Button
                   onClick={nextRound}
                   size="lg"
-                  className="bg-[var(--rps-primary)] hover:bg-[var(--rps-primary)]/90"
+                  className="bg-[var(--rps-primary)] hover:bg-[var(--rps-primary)]/90 hover:shadow-lg transition-all duration-200"
                 >
                   다음 라운드
                 </Button>

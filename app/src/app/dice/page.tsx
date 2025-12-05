@@ -79,13 +79,19 @@ export default function DicePage() {
               </div>
             </div>
 
-            <Button
-              onClick={handleStart}
-              size="lg"
-              className="w-full bg-[var(--luck-primary)] hover:bg-[var(--luck-primary)]/90"
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full"
             >
-              시작하기
-            </Button>
+              <Button
+                onClick={handleStart}
+                size="lg"
+                className="w-full bg-[var(--luck-primary)] hover:bg-[var(--luck-primary)]/90 hover:shadow-lg transition-all duration-200"
+              >
+                시작하기
+              </Button>
+            </motion.div>
           </motion.div>
         )}
 

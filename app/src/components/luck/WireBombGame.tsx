@@ -204,11 +204,13 @@ export function WireBombGame({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
                 <Button
                   onClick={onNextRound}
                   size="lg"
-                  className="w-full bg-green-500 hover:bg-green-600"
+                  className="w-full bg-green-500 hover:bg-green-600 hover:shadow-lg transition-all duration-200"
                 >
                   다음 라운드 도전! ({survivalCount + 1}번째)
                 </Button>

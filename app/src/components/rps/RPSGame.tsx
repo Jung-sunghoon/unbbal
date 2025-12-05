@@ -219,11 +219,13 @@ export function RPSGame({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
+                whileHover={{ scale: 1.05, y: -4 }}
+                whileTap={{ scale: 0.95 }}
               >
                 <Button
                   onClick={() => onPlay(move)}
                   variant="outline"
-                  className="w-full h-24 flex flex-col gap-2 hover:bg-[var(--rps-primary)]/10 hover:border-[var(--rps-primary)] transition-all"
+                  className="w-full h-24 flex flex-col gap-2 hover:bg-[var(--rps-primary)]/10 hover:border-[var(--rps-primary)] hover:shadow-lg transition-all duration-200"
                 >
                   <span className="text-4xl">{RPS_EMOJI[move]}</span>
                   <span className="text-xs font-medium">{RPS_NAME[move]}</span>

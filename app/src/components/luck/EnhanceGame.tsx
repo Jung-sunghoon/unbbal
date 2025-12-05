@@ -160,11 +160,13 @@ export function EnhanceGame({
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
               <Button
                 onClick={onConfirm}
                 size="lg"
-                className="w-full bg-yellow-500 hover:bg-yellow-600"
+                className="w-full bg-yellow-500 hover:bg-yellow-600 hover:shadow-lg transition-all duration-200"
               >
                 결과 확인
               </Button>
@@ -177,23 +179,38 @@ export function EnhanceGame({
               animate={{ opacity: 1, y: 0 }}
               className="flex gap-3"
             >
-              <Button
-                onClick={onEnhance}
-                size="lg"
+              <motion.div
                 className="flex-1"
-                style={{ backgroundColor: levelColor }}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
               >
-                강화하기
-              </Button>
-              {level > 0 && (
                 <Button
-                  onClick={onStop}
+                  onClick={onEnhance}
                   size="lg"
-                  variant="outline"
-                  className="flex-1"
+                  className="w-full transition-all duration-200 hover:shadow-lg hover:brightness-110"
+                  style={{
+                    backgroundColor: levelColor,
+                    boxShadow: `0 0 0 0 ${levelColor}40`
+                  }}
                 >
-                  여기서 멈추기
+                  강화하기
                 </Button>
+              </motion.div>
+              {level > 0 && (
+                <motion.div
+                  className="flex-1"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  <Button
+                    onClick={onStop}
+                    size="lg"
+                    variant="outline"
+                    className="w-full transition-all duration-200 hover:shadow-md hover:bg-muted"
+                  >
+                    여기서 멈추기
+                  </Button>
+                </motion.div>
               )}
             </motion.div>
           )}

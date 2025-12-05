@@ -122,13 +122,19 @@ export default function EnhancePage() {
               </div>
             </div>
 
-            <Button
-              onClick={handleStart}
-              size="lg"
-              className="w-full bg-purple-500 hover:bg-purple-600"
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full"
             >
-              강화 시작!
-            </Button>
+              <Button
+                onClick={handleStart}
+                size="lg"
+                className="w-full bg-purple-500 hover:bg-purple-600 hover:shadow-lg transition-all duration-200"
+              >
+                강화 시작!
+              </Button>
+            </motion.div>
           </motion.div>
         )}
 
