@@ -3,7 +3,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState, useCallback } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -13,30 +13,20 @@ import { useDiceGame } from "@/lib/hooks/useDiceGame";
 
 export default function DicePage() {
   const router = useRouter();
-  const [phase, setPhase] = useState<"intro" | "playing" | "complete">("intro");
-  const { rolls, rollCount, currentRoll, sum, isComplete, roll, reset } = useDiceGame();
-
-  // 게임 완료 시 phase 변경
-  useEffect(() => {
-    if (isComplete && phase === "playing") {
-      setPhase("complete");
-    }
-  }, [isComplete, phase]);
-
-  // complete 상태에서 결과 페이지로 이동
-  useEffect(() => {
-    if (phase === "complete") {
-      const timer = setTimeout(() => {
-        router.push(`/dice/result?sum=${sum}&rolls=${rolls.join(",")}`);
-      }, 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [phase, sum, rolls, router]);
+  const [phase, setPhase] = useState<"intro" | "playing">("intro");
+  const { rolls, rollCount, currentRoll, sum, roll, reset } = useDiceGame();
 
   const handleStart = () => {
     reset();
     setPhase("playing");
   };
+
+  const handleComplete = useCallback(() => {
+    // 애니메이션 끝난 후 1.5초 뒤 결과 페이지로 이동
+    setTimeout(() => {
+      router.push(`/dice/result?sum=${sum}&rolls=${rolls.join(",")}`);
+    }, 1500);
+  }, [router, sum, rolls]);
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -107,31 +97,8 @@ export default function DicePage() {
             totalSum={sum}
             rolls={rolls}
             onRoll={roll}
+            onComplete={handleComplete}
           />
-        )}
-
-        {/* 완료 */}
-        {phase === "complete" && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center space-y-4"
-          >
-            <DiceRoll
-              rollCount={rollCount}
-              currentRoll={currentRoll}
-              totalSum={sum}
-              rolls={rolls}
-              onRoll={() => {}}
-            />
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: "spring", damping: 10 }}
-            >
-              <p className="text-muted-foreground">결과 페이지로 이동 중...</p>
-            </motion.div>
-          </motion.div>
         )}
       </main>
 

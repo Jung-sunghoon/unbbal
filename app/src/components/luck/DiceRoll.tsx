@@ -24,6 +24,7 @@ interface DiceRollProps {
   totalSum: number;
   rolls: number[];
   onRoll: () => void;
+  onComplete?: () => void;
 }
 
 // 굴린 숫자에 따른 반응
@@ -36,17 +37,19 @@ function getRollReaction(value: number): { emoji: string; text: string; color: s
   return { emoji: "💀", text: "으악", color: "#DC143C" };
 }
 
-export function DiceRoll({ rollCount, currentRoll, totalSum, rolls, onRoll }: DiceRollProps) {
+export function DiceRoll({ rollCount, currentRoll, totalSum, rolls, onRoll, onComplete }: DiceRollProps) {
   const [isRolling, setIsRolling] = useState(false);
   const [displaySum, setDisplaySum] = useState(0);
   const [floatingNumber, setFloatingNumber] = useState<{ value: number; key: number } | null>(null);
   const [showReaction, setShowReaction] = useState(false);
+  const [isFinished, setIsFinished] = useState(false);
   const prevRollRef = useRef(0);
   const keyRef = useRef(0);
   const isComplete = rollCount >= 10;
 
   const handleRoll = useCallback(() => {
     if (isRolling) return;
+    setIsRolling(true);
     setShowReaction(false);
     onRoll();
   }, [isRolling, onRoll]);
@@ -83,7 +86,13 @@ export function DiceRoll({ rollCount, currentRoll, totalSum, rolls, onRoll }: Di
     keyRef.current += 1;
     setFloatingNumber({ value: currentRoll, key: keyRef.current });
     setShowReaction(true);
-  }, [totalSum, currentRoll]);
+
+    // 10회 완료 후 애니메이션까지 끝나면 완료 처리
+    if (rollCount >= 10) {
+      setIsFinished(true);
+      onComplete?.();
+    }
+  }, [totalSum, currentRoll, rollCount, onComplete]);
 
   const reaction = getRollReaction(currentRoll);
   const progress = (rollCount / 10) * 100;
@@ -206,10 +215,10 @@ export function DiceRoll({ rollCount, currentRoll, totalSum, rolls, onRoll }: Di
 
         {/* 굴리기 버튼 */}
         <div className="h-12">
-          {!isComplete ? (
+          {!isFinished ? (
             <Button
               onClick={handleRoll}
-              disabled={isRolling}
+              disabled={isRolling || isComplete}
               size="lg"
               className="w-full bg-[var(--luck-primary)] hover:bg-[var(--luck-primary)]/90"
             >
