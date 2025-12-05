@@ -28,8 +28,8 @@ export default function Home() {
           <TestCard
             href="/bomb"
             emoji="💣"
-            title="폭탄 피하기"
-            description="6개 상자 중 폭탄을 피해라!"
+            title="폭탄 해제"
+            description="7개 선 중 폭탄을 피해 해제하라!"
             accentColor="#EF4444"
           />
           <TestCard
