@@ -35,7 +35,7 @@ function DiceResultContent() {
 
   const shareUrl = typeof window !== "undefined"
     ? window.location.href
-    : "https://unbbal.gg/dice/result";
+    : "https://unbbal.site/dice/result";
   const shareText = `🎲 주사위 굴리기: ${grade.grade} (${grade.title}) - 합계 ${sum}점`;
 
   const average = rolls.length > 0 ? (sum / rolls.length).toFixed(1) : "0";

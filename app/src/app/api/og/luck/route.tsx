@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
             marginTop: 40,
           }}
         >
-          unbbal.gg
+          unbbal.site
         </div>
       </div>
     ),

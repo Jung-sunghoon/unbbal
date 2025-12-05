@@ -1,5 +1,5 @@
 // © 2025 운빨(unbbal). All rights reserved.
-// https://unbbal.gg
+// https://unbbal.site
 
 import type { Metadata } from "next";
 import localFont from "next/font/local";
@@ -27,11 +27,11 @@ export const metadata: Metadata = {
   keywords: ["운빨", "운 테스트", "가위바위보", "주사위", "폭탄 피하기", "강화 시뮬레이터", "운세", "럭키 게임", "미니게임"],
   authors: [{ name: "운빨" }],
   creator: "운빨",
-  metadataBase: new URL("https://unbbal.gg"),
+  metadataBase: new URL("https://unbbal.site"),
   openGraph: {
     title: "운빨 - 운빨로 놀자!",
     description: "주사위 굴리기, 폭탄 피하기, 강화 시뮬레이터, AI 가위바위보까지! 다양한 운빨 게임으로 오늘의 운을 테스트해보세요.",
-    url: "https://unbbal.gg",
+    url: "https://unbbal.site",
     siteName: "운빨",
     locale: "ko_KR",
     type: "website",

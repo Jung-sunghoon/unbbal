@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "주사위 굴리기 | 운빨",
     description: "주사위를 10번 굴려서 합계로 오늘의 운빨을 측정해보세요!",
-    url: "https://unbbal.gg/dice",
+    url: "https://unbbal.site/dice",
   },
 };
 

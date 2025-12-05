@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "폭탄 피하기 | 운빨",
     description: "6개 상자 중 폭탄을 피해라! 몇 번 연속 생존할 수 있을까?",
-    url: "https://unbbal.gg/bomb",
+    url: "https://unbbal.site/bomb",
   },
 };
 

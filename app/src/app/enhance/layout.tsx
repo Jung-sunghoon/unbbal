@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "강화 시뮬레이터 | 운빨",
     description: "아이템을 몇 강까지 올릴 수 있을까? +7부터 파괴 확률!",
-    url: "https://unbbal.gg/enhance",
+    url: "https://unbbal.site/enhance",
   },
 };
 

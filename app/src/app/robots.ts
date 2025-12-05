@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/api/"],
     },
-    sitemap: "https://unbbal.gg/sitemap.xml",
+    sitemap: "https://unbbal.site/sitemap.xml",
   };
 }

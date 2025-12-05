@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "AI 가위바위보 | 운빨",
     description: "AI 상대로 몇 연승 가능? 똑똑한 AI와 가위바위보 대결!",
-    url: "https://unbbal.gg/rps",
+    url: "https://unbbal.site/rps",
   },
 };
 

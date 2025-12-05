@@ -44,7 +44,7 @@ function EnhanceResultContent() {
 
   const shareUrl = typeof window !== "undefined"
     ? window.location.href
-    : "https://unbbal.gg/enhance/result";
+    : "https://unbbal.site/enhance/result";
   const shareText = `⚔️ 강화 시뮬레이터: ${grade.grade} (${grade.title}) - +${level} 달성! (${attempts}회 시도)`;
 
   const levelColor = getLevelColor(level);

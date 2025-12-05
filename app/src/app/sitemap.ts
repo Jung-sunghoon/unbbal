@@ -3,7 +3,7 @@
 import { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://unbbal.gg";
+  const baseUrl = "https://unbbal.site";
 
   return [
     {

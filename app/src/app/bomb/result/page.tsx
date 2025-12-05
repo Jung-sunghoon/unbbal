@@ -33,7 +33,7 @@ function BombResultContent() {
 
   const shareUrl = typeof window !== "undefined"
     ? window.location.href
-    : "https://unbbal.gg/bomb/result";
+    : "https://unbbal.site/bomb/result";
   const shareText = `💣 폭탄 피하기: ${grade.grade} (${grade.title}) - ${survival}연속 생존!`;
 
   // 생존 확률 계산 (16% 폭발 확률로 n번 연속 생존)

@@ -1,5 +1,5 @@
 // © 2025 운빨(unbbal). All rights reserved.
-// https://unbbal.gg
+// https://unbbal.site
 
 // 공통 등급 타입
 export interface GradeInfo {

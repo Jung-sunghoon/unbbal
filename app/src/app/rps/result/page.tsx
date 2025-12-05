@@ -50,7 +50,7 @@ function RPSResultContent() {
 
   const shareUrl = typeof window !== "undefined"
     ? window.location.href
-    : "https://unbbal.gg/rps/result";
+    : "https://unbbal.site/rps/result";
   const shareText = `AI 가위바위보 ${streak}연승 달성! - ${grade.title}`;
 
   return (
