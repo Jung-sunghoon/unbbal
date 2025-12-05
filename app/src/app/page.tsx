@@ -20,28 +20,51 @@ export default function Home() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
           <TestCard
             href="/dice"
-            emoji="🎲"
+            image="/dotImg/dice/six sided die.png"
+            spriteConfig={{
+              width: 48,
+              height: 48,
+              bgSize: "288px 720px",
+              bgPosition: "0 0",
+            }}
             title="주사위 굴리기"
             description="10번 굴려서 합계로 운빨 측정!"
             accentColor="#F59E0B"
           />
           <TestCard
             href="/bomb"
-            emoji="💣"
-            title="폭탄 해제"
-            description="7개 선 중 폭탄을 피해 해제하라!"
+            animatedFrames={[
+              "/dotImg/bomb/1.png",
+              "/dotImg/bomb/2.png",
+              "/dotImg/bomb/3.png",
+              "/dotImg/bomb/4.png",
+              "/dotImg/bomb/5.png",
+              "/dotImg/bomb/6.png",
+              "/dotImg/bomb/7.png",
+              "/dotImg/bomb/8.png",
+              "/dotImg/bomb/9.png",
+              "/dotImg/bomb/10.png",
+            ]}
+            title="폭탄 피하기"
+            description="6개 중 진짜 폭탄을 피해라!"
             accentColor="#EF4444"
           />
           <TestCard
             href="/enhance"
-            emoji="⚔️"
+            image="/dotImg/sword/sword.png"
+            spriteConfig={{
+              width: 48,
+              height: 48,
+              bgSize: "288px 240px",
+              bgPosition: "0 0",
+            }}
             title="강화 시뮬레이터"
             description="몇 강까지 올릴 수 있을까?"
             accentColor="#8B5CF6"
           />
           <TestCard
             href="/rps"
-            emoji="✊"
+            image="/dotImg/hand/rock.png"
             title="AI 가위바위보"
             description="AI 상대로 몇 연승 가능?"
             accentColor="#10B981"

@@ -17,31 +17,44 @@ export interface BombGameState {
   boxes: BoxState[];
   survivalCount: number;
   selectedBox: number | null;
+  bombCount: number;
 }
 
-function createBoxes(): BoxState[] {
-  const bombIndex = Math.floor(Math.random() * BOX_COUNT);
+// 라운드에 따른 폭탄 개수 계산 (5라운드마다 +1, 최대 4개)
+function getBombCount(survivalCount: number): number {
+  return Math.min(1 + Math.floor(survivalCount / 5), 4);
+}
+
+function createBoxes(bombCount: number = 1): BoxState[] {
+  // 랜덤으로 bombCount개의 폭탄 위치 선택
+  const bombIndices = new Set<number>();
+  while (bombIndices.size < bombCount) {
+    bombIndices.add(Math.floor(Math.random() * BOX_COUNT));
+  }
+
   return Array.from({ length: BOX_COUNT }, (_, i) => ({
     id: i,
     isOpened: false,
-    hasBomb: i === bombIndex,
+    hasBomb: bombIndices.has(i),
   }));
 }
 
 export function useBombGame() {
   const [state, setState] = useState<BombGameState>({
     phase: "ready",
-    boxes: createBoxes(),
+    boxes: createBoxes(1),
     survivalCount: 0,
     selectedBox: null,
+    bombCount: 1,
   });
 
   const startGame = useCallback(() => {
     setState({
       phase: "playing",
-      boxes: createBoxes(),
+      boxes: createBoxes(1),
       survivalCount: 0,
       selectedBox: null,
+      bombCount: 1,
     });
   }, []);
 
@@ -87,20 +100,25 @@ export function useBombGame() {
   const nextRound = useCallback(() => {
     if (state.phase !== "safe") return;
 
+    const newSurvivalCount = state.survivalCount;
+    const newBombCount = getBombCount(newSurvivalCount);
+
     setState(prev => ({
       ...prev,
       phase: "playing",
-      boxes: createBoxes(),
+      boxes: createBoxes(newBombCount),
       selectedBox: null,
+      bombCount: newBombCount,
     }));
-  }, [state.phase]);
+  }, [state.phase, state.survivalCount]);
 
   const resetGame = useCallback(() => {
     setState({
       phase: "ready",
-      boxes: createBoxes(),
+      boxes: createBoxes(1),
       survivalCount: 0,
       selectedBox: null,
+      bombCount: 1,
     });
   }, []);
 

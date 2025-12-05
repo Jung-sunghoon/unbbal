@@ -59,7 +59,7 @@ export function FeedbackButton() {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="inline-flex items-center justify-center gap-2 px-4 py-2 min-w-[160px] bg-muted text-foreground font-medium rounded-lg hover:bg-muted/80 transition-colors"
+        className="inline-flex items-center justify-center gap-2 px-4 py-2 min-w-[160px] bg-muted text-foreground font-medium rounded-lg hover:bg-muted/80 transition-colors cursor-pointer"
       >
         <span>💬</span>
         <span>피드백 보내기</span>
@@ -103,7 +103,7 @@ export function FeedbackButton() {
                             key={t.value}
                             type="button"
                             onClick={() => setType(t.value)}
-                            className={`p-2 rounded-lg border text-sm font-medium transition-colors ${
+                            className={`p-2 rounded-lg border text-sm font-medium transition-colors cursor-pointer ${
                               type === t.value
                                 ? "border-[var(--luck-primary)] bg-[var(--luck-primary)]/10 text-[var(--luck-primary)]"
                                 : "border-border hover:bg-muted"
@@ -156,14 +156,14 @@ export function FeedbackButton() {
                         type="button"
                         variant="outline"
                         onClick={() => setIsOpen(false)}
-                        className="flex-1"
+                        className="flex-1 cursor-pointer"
                       >
                         취소
                       </Button>
                       <Button
                         type="submit"
                         disabled={isSubmitting}
-                        className="flex-1 bg-[var(--luck-primary)] hover:bg-[var(--luck-primary)]/90"
+                        className="flex-1 bg-[var(--luck-primary)] hover:bg-[var(--luck-primary)]/90 cursor-pointer"
                       >
                         {isSubmitting ? "전송 중..." : "보내기"}
                       </Button>

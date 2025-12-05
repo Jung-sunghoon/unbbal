@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Footer } from "@/components/Footer";
 import { ResultShare } from "@/components/ResultShare";
 import { getDiceGrade } from "@/lib/constants";
+import { useBestRecord } from "@/lib/hooks/useBestRecord";
 
 const DICE_MESSAGES: Record<string, string[]> = {
   SSS: ["신이 주사위를 굴려줬다", "운빨 만렙", "가챠 지금 당장!"],
@@ -27,6 +28,12 @@ interface DiceResultContentProps {
 
 export function DiceResultContent({ sum, rolls }: DiceResultContentProps) {
   const grade = getDiceGrade(sum);
+  const { bestRecord, isNewRecord, updateRecord } = useBestRecord("dice");
+
+  useEffect(() => {
+    updateRecord(sum);
+  }, [sum, updateRecord]);
+
   const message = useMemo(() => {
     const messages = DICE_MESSAGES[grade.grade] || [];
     return messages[Math.floor(Math.random() * messages.length)] || "";
@@ -83,14 +90,26 @@ export function DiceResultContent({ sum, rolls }: DiceResultContentProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8 }}
-              className="bg-muted rounded-lg p-4 text-center"
+              className="bg-muted rounded-lg p-4 text-center relative"
             >
+              {isNewRecord && (
+                <motion.div
+                  initial={{ scale: 0, rotate: -12 }}
+                  animate={{ scale: 1, rotate: -12 }}
+                  className="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded"
+                >
+                  NEW!
+                </motion.div>
+              )}
               <p className="text-sm text-muted-foreground">10회 합계</p>
               <p className="text-5xl font-black" style={{ color: grade.color }}>
                 {sum}
               </p>
               <p className="text-sm text-muted-foreground mt-1">
                 평균 {average} / 기대값 3.5
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                최고 기록: {bestRecord}점
               </p>
             </motion.div>
 

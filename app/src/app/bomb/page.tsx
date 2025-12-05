@@ -8,29 +8,57 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Footer } from "@/components/Footer";
-import { WireBombGame } from "@/components/luck/WireBombGame";
-import { useWireBombGame } from "@/lib/hooks/useWireBombGame";
+import { BombGame } from "@/components/luck/BombGame";
+import { useBombGame } from "@/lib/hooks/useBombGame";
+import { useScreenShake } from "@/lib/hooks/useScreenShake";
+
+const BOMB_FRAMES = [
+  "/dotImg/bomb/1.png",
+  "/dotImg/bomb/2.png",
+  "/dotImg/bomb/3.png",
+  "/dotImg/bomb/4.png",
+  "/dotImg/bomb/5.png",
+  "/dotImg/bomb/6.png",
+  "/dotImg/bomb/7.png",
+  "/dotImg/bomb/8.png",
+  "/dotImg/bomb/9.png",
+  "/dotImg/bomb/10.png",
+];
 
 export default function BombPage() {
   const router = useRouter();
   const [gamePhase, setGamePhase] = useState<"intro" | "playing" | "gameover">("intro");
+  const [bombFrame, setBombFrame] = useState(0);
+  const { shakeStyle, shake } = useScreenShake();
+
+  // 인트로 폭탄 애니메이션
+  useEffect(() => {
+    if (gamePhase !== "intro") return;
+    const interval = setInterval(() => {
+      setBombFrame((prev) => (prev + 1) % BOMB_FRAMES.length);
+    }, 100);
+    return () => clearInterval(interval);
+  }, [gamePhase]);
+
   const {
     phase,
-    wires,
+    boxes,
     survivalCount,
-    lastCutWire,
+    selectedBox,
+    bombCount,
     startGame,
-    cutWire,
-    confirmCut,
+    selectBox,
+    confirmResult,
     nextRound,
-  } = useWireBombGame();
+  } = useBombGame();
 
-  // 폭발시 phase 변경
+  // 폭발시 phase 변경 + 화면 흔들림
   useEffect(() => {
     if (phase === "exploded" && gamePhase === "playing") {
+      shake("heavy");
       setGamePhase("gameover");
     }
-  }, [phase, gamePhase]);
+  }, [phase, gamePhase, shake]);
 
   // gameover 상태에서 결과 페이지로 이동
   useEffect(() => {
@@ -48,15 +76,15 @@ export default function BombPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="flex min-h-screen flex-col bg-background" style={shakeStyle}>
       <main className="flex-1 container mx-auto px-4 py-12">
         <header className="text-center mb-8">
           <Link href="/" className="text-sm text-muted-foreground hover:underline">
             ← 메인으로
           </Link>
-          <h1 className="text-3xl font-bold mt-4 mb-2">💣 폭탄 해제</h1>
+          <h1 className="text-3xl font-bold mt-4 mb-2">💣 폭탄 피하기</h1>
           <p className="text-muted-foreground">
-            올바른 순서로 선을 잘라 폭탄을 해제하라!
+            진짜 폭탄을 피해라! 점점 어려워져!
           </p>
         </header>
 
@@ -67,33 +95,34 @@ export default function BombPage() {
             animate={{ opacity: 1, y: 0 }}
             className="flex flex-col items-center gap-6 max-w-md mx-auto"
           >
-            <motion.div
-              className="text-8xl"
-              animate={{ scale: [1, 1.1, 1] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-            >
-              💣
-            </motion.div>
+            <div className="relative">
+              <img
+                src={BOMB_FRAMES[bombFrame]}
+                alt="폭탄"
+                className="w-24 h-24"
+                style={{ imageRendering: "pixelated" }}
+              />
+            </div>
 
             <div className="w-full p-4 rounded-lg bg-muted">
               <h3 className="font-medium mb-3 text-center">게임 규칙</h3>
               <ul className="text-sm text-muted-foreground space-y-2">
                 <li className="flex items-center gap-2">
-                  <span>🌈</span>
-                  7개의 무지개 색 전선이 연결되어 있어요
+                  <span>💣</span>
+                  6개의 폭탄 중 진짜를 피하세요!
                 </li>
                 <li className="flex items-center gap-2">
-                  <span>✂️</span>
-                  힌트를 보고 올바른 순서로 전선을 자르세요
+                  <span>📈</span>
+                  5라운드마다 진짜 폭탄 +1 (최대 4개)
                 </li>
                 <li className="flex items-center gap-2">
                   <span>💥</span>
-                  순서가 틀리면 폭발!
+                  진짜 폭탄을 고르면 펑!
                 </li>
               </ul>
               <div className="mt-4 pt-3 border-t border-border">
                 <p className="text-xs text-center text-muted-foreground">
-                  7개 전선을 모두 자르면 폭탄 해제 성공!
+                  몇 라운드나 생존할 수 있을까?
                 </p>
               </div>
             </div>
@@ -108,7 +137,7 @@ export default function BombPage() {
                 size="lg"
                 className="w-full bg-red-500 hover:bg-red-600 hover:shadow-lg transition-all duration-200"
               >
-                폭탄 해제 시작!
+                게임 시작!
               </Button>
             </motion.div>
           </motion.div>
@@ -116,13 +145,14 @@ export default function BombPage() {
 
         {/* 게임 플레이 */}
         {gamePhase === "playing" && phase !== "exploded" && (
-          <WireBombGame
+          <BombGame
             phase={phase}
-            wires={wires}
+            boxes={boxes}
             survivalCount={survivalCount}
-            lastCutWire={lastCutWire}
-            onCutWire={cutWire}
-            onCutComplete={confirmCut}
+            selectedBox={selectedBox}
+            bombCount={bombCount}
+            onSelectBox={selectBox}
+            onRevealComplete={confirmResult}
             onNextRound={nextRound}
           />
         )}
@@ -134,13 +164,14 @@ export default function BombPage() {
             animate={{ opacity: 1 }}
             className="text-center space-y-4"
           >
-            <WireBombGame
+            <BombGame
               phase={phase}
-              wires={wires}
+              boxes={boxes}
               survivalCount={survivalCount}
-              lastCutWire={lastCutWire}
-              onCutWire={() => {}}
-              onCutComplete={() => {}}
+              selectedBox={selectedBox}
+              bombCount={bombCount}
+              onSelectBox={() => {}}
+              onRevealComplete={() => {}}
               onNextRound={() => {}}
             />
             <motion.div

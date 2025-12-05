@@ -5,7 +5,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { RPSMove, RPS_EMOJI, RPS_NAME } from "@/lib/constants";
+import { HandPixel } from "./HandPixel";
+import { RPSMove, RPS_NAME } from "@/lib/constants";
 import type { RPSGameState } from "@/lib/hooks/useRPSGame";
 
 interface RPSGameProps {
@@ -105,9 +106,11 @@ export function RPSGame({
               }
               transition={{ duration: 0.3 }}
             >
-              <span className="text-5xl">
-                {playerMove ? RPS_EMOJI[playerMove] : "❓"}
-              </span>
+              {playerMove ? (
+                <HandPixel move={playerMove} size={64} />
+              ) : (
+                <span className="text-5xl">❓</span>
+              )}
             </motion.div>
           </div>
 
@@ -139,24 +142,22 @@ export function RPSGame({
             >
               <AnimatePresence mode="wait">
                 {isRevealing ? (
-                  <motion.span
+                  <motion.div
                     key="revealing"
                     initial={{ scale: 0, rotate: 180 }}
                     animate={{ scale: 1, rotate: 0 }}
                     exit={{ scale: 0 }}
-                    className="text-5xl"
                   >
-                    {aiMove ? RPS_EMOJI[aiMove] : "🤖"}
-                  </motion.span>
+                    {aiMove ? <HandPixel move={aiMove} size={64} isRevealing /> : <span className="text-5xl">🤖</span>}
+                  </motion.div>
                 ) : showResult && aiMove ? (
-                  <motion.span
+                  <motion.div
                     key="result"
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="text-5xl"
                   >
-                    {RPS_EMOJI[aiMove]}
-                  </motion.span>
+                    <HandPixel move={aiMove} size={64} />
+                  </motion.div>
                 ) : (
                   <motion.span
                     key="waiting"
@@ -225,9 +226,9 @@ export function RPSGame({
                 <Button
                   onClick={() => onPlay(move)}
                   variant="outline"
-                  className="w-full h-24 flex flex-col gap-2 hover:bg-[var(--rps-primary)]/10 hover:border-[var(--rps-primary)] hover:shadow-lg transition-all duration-200"
+                  className="w-full h-24 flex flex-col gap-1 hover:bg-[var(--rps-primary)]/10 hover:border-[var(--rps-primary)] hover:shadow-lg transition-all duration-200"
                 >
-                  <span className="text-4xl">{RPS_EMOJI[move]}</span>
+                  <HandPixel move={move} size={48} />
                   <span className="text-xs font-medium">{RPS_NAME[move]}</span>
                 </Button>
               </motion.div>

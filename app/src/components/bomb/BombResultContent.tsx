@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Footer } from "@/components/Footer";
 import { ResultShare } from "@/components/ResultShare";
 import { getBombGrade } from "@/lib/constants";
+import { useBestRecord } from "@/lib/hooks/useBestRecord";
 
 const BOMB_MESSAGES: Record<string, string[]> = {
   SSS: ["폭탄이 무서워하는 사람", "폭탄 해체 전문가", "운빨 만렙!"],
@@ -26,6 +27,13 @@ interface BombResultContentProps {
 
 export function BombResultContent({ survival }: BombResultContentProps) {
   const grade = getBombGrade(survival);
+  const { bestRecord, isNewRecord, updateRecord } = useBestRecord("bomb");
+
+  // 기록 업데이트
+  useEffect(() => {
+    updateRecord(survival);
+  }, [survival, updateRecord]);
+
   const message = useMemo(() => {
     const messages = BOMB_MESSAGES[grade.grade] || [];
     return messages[Math.floor(Math.random() * messages.length)] || "";
@@ -83,8 +91,17 @@ export function BombResultContent({ survival }: BombResultContentProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8 }}
-              className="bg-muted rounded-lg p-4 text-center"
+              className="bg-muted rounded-lg p-4 text-center relative"
             >
+              {isNewRecord && (
+                <motion.div
+                  initial={{ scale: 0, rotate: -12 }}
+                  animate={{ scale: 1, rotate: -12 }}
+                  className="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded"
+                >
+                  NEW!
+                </motion.div>
+              )}
               <p className="text-sm text-muted-foreground">연속 생존</p>
               <p className="text-5xl font-black" style={{ color: grade.color }}>
                 {survival}회
@@ -94,6 +111,9 @@ export function BombResultContent({ survival }: BombResultContentProps) {
                   확률: {survivalRate.toFixed(1)}%
                 </p>
               )}
+              <p className="text-xs text-muted-foreground mt-2">
+                최고 기록: {bestRecord}회
+              </p>
             </motion.div>
 
             <motion.div

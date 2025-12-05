@@ -10,10 +10,12 @@ import { Button } from "@/components/ui/button";
 import { Footer } from "@/components/Footer";
 import { EnhanceGame } from "@/components/luck/EnhanceGame";
 import { useEnhanceGame } from "@/lib/hooks/useEnhanceGame";
+import { useScreenShake } from "@/lib/hooks/useScreenShake";
 
 export default function EnhancePage() {
   const router = useRouter();
   const [gamePhase, setGamePhase] = useState<"intro" | "playing" | "ending">("intro");
+  const { shakeStyle, shake } = useScreenShake();
   const {
     phase,
     level,
@@ -27,12 +29,15 @@ export default function EnhancePage() {
     stopGame,
   } = useEnhanceGame();
 
-  // 파괴 또는 종료 시 phase 변경
+  // 파괴 또는 종료 시 phase 변경 + 화면 흔들림
   useEffect(() => {
     if ((phase === "destroyed" || phase === "result") && gamePhase === "playing") {
+      if (phase === "destroyed") {
+        shake("heavy");
+      }
       setGamePhase("ending");
     }
-  }, [phase, gamePhase]);
+  }, [phase, gamePhase, shake]);
 
   // ending 상태에서 결과 페이지로 이동
   useEffect(() => {
@@ -51,7 +56,7 @@ export default function EnhancePage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="flex min-h-screen flex-col bg-background" style={shakeStyle}>
       <main className="flex-1 container mx-auto px-4 py-12">
         <header className="text-center mb-8">
           <Link href="/" className="text-sm text-muted-foreground hover:underline">

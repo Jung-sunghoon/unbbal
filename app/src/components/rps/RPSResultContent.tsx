@@ -2,12 +2,14 @@
 
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Footer } from "@/components/Footer";
 import { ResultShare } from "@/components/ResultShare";
+import { useBestRecord } from "@/lib/hooks/useBestRecord";
 
 const AI_NAME = "가위바위보의 신";
 
@@ -46,6 +48,11 @@ export function RPSResultContent({ streak }: RPSResultContentProps) {
   const grade = getStreakGrade(streak);
   const message = getStreakMessage(streak);
   const aiReaction = getAIReaction(streak);
+  const { bestRecord, isNewRecord, updateRecord } = useBestRecord("rps");
+
+  useEffect(() => {
+    updateRecord(streak);
+  }, [streak, updateRecord]);
 
   const shareUrl = `https://unbbal.site/rps/result?streak=${streak}`;
   const shareText = `AI 가위바위보 ${streak}연승 달성! - ${grade.title}`;
@@ -74,12 +81,25 @@ export function RPSResultContent({ streak }: RPSResultContentProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
+              className="relative"
             >
+              {isNewRecord && (
+                <motion.div
+                  initial={{ scale: 0, rotate: -12 }}
+                  animate={{ scale: 1, rotate: -12 }}
+                  className="absolute -top-4 -right-4 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded"
+                >
+                  NEW!
+                </motion.div>
+              )}
               <CardTitle className="text-5xl font-black" style={{ color: grade.color }}>
                 {streak}연승
               </CardTitle>
               <p className="text-xl font-bold mt-1" style={{ color: grade.color }}>
                 {grade.tier} - {grade.title}
+              </p>
+              <p className="text-xs text-muted-foreground mt-2">
+                최고 기록: {bestRecord}연승
               </p>
             </motion.div>
           </CardHeader>

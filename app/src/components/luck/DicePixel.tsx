@@ -12,20 +12,24 @@ interface DicePixelProps {
 }
 
 // 스프라이트 시트 정보
-// six sided die.png: 7열 x 12행, 각 주사위 16x16
+// six sided die.png: 6열 x 15행, 각 주사위 16x16 (전체 96x240)
 const SPRITE_SIZE = 16;
-const DICE_SCALE = 8; // 16px * 8 = 128px로 확대
+const DICE_SCALE = 6; // 16px * 6 = 96px로 확대
 const DISPLAY_SIZE = SPRITE_SIZE * DICE_SCALE;
 
+// 스프라이트 시트 크기
+const SHEET_COLS = 6;
+const SHEET_ROWS = 15;
+
 // 주사위 면 위치 (0부터 시작, 첫번째 행 = 흰색 주사위)
-// 열 순서: 1, 2, 3, 4, 5, 6, 빈칸
-const FACE_POSITIONS: Record<number, { x: number; y: number }> = {
-  1: { x: 0, y: 0 },
-  2: { x: 1, y: 0 },
-  3: { x: 2, y: 0 },
-  4: { x: 3, y: 0 },
-  5: { x: 4, y: 0 },
-  6: { x: 5, y: 0 },
+// 열 순서: 1, 2, 3, 4, 5, 6
+const FACE_POSITIONS: Record<number, { col: number; row: number }> = {
+  1: { col: 0, row: 0 },
+  2: { col: 1, row: 0 },
+  3: { col: 2, row: 0 },
+  4: { col: 3, row: 0 },
+  5: { col: 4, row: 0 },
+  6: { col: 5, row: 0 },
 };
 
 export function DicePixel({ value, isRolling, onRollComplete }: DicePixelProps) {
@@ -94,8 +98,8 @@ export function DicePixel({ value, isRolling, onRollComplete }: DicePixelProps) 
           className="w-full h-full"
           style={{
             backgroundImage: `url('/dotImg/dice/six sided die.png')`,
-            backgroundPosition: `-${position.x * SPRITE_SIZE * DICE_SCALE}px -${position.y * SPRITE_SIZE * DICE_SCALE}px`,
-            backgroundSize: `${7 * SPRITE_SIZE * DICE_SCALE}px ${12 * SPRITE_SIZE * DICE_SCALE}px`,
+            backgroundPosition: `-${position.col * SPRITE_SIZE * DICE_SCALE}px -${position.row * SPRITE_SIZE * DICE_SCALE}px`,
+            backgroundSize: `${SHEET_COLS * SPRITE_SIZE * DICE_SCALE}px ${SHEET_ROWS * SPRITE_SIZE * DICE_SCALE}px`,
             imageRendering: "pixelated",
           }}
         />

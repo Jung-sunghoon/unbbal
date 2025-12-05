@@ -3,27 +3,18 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { BombPixel } from "./BombPixel";
 import type { BombGameState } from "@/lib/hooks/useBombGame";
-
-// SSR에서 Three.js 로드 방지
-const Box3D = dynamic(() => import("./Box3D").then(mod => ({ default: mod.Box3D })), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-64 flex items-center justify-center bg-muted rounded-lg">
-      <span className="text-4xl animate-pulse">📦</span>
-    </div>
-  ),
-});
 
 interface BombGameProps {
   phase: BombGameState["phase"];
   boxes: BombGameState["boxes"];
   survivalCount: number;
   selectedBox: number | null;
+  bombCount: number;
   onSelectBox: (id: number) => void;
   onRevealComplete: () => void;
   onNextRound: () => void;
@@ -34,6 +25,7 @@ export function BombGame({
   boxes,
   survivalCount,
   selectedBox,
+  bombCount,
   onSelectBox,
   onRevealComplete,
   onNextRound,
@@ -105,7 +97,7 @@ export function BombGame({
                 exit={{ opacity: 0 }}
                 className="text-muted-foreground"
               >
-                상자를 선택하세요 (6개 중 1개에 폭탄!)
+                폭탄을 선택하세요 (6개 중 {bombCount}개가 진짜!)
               </motion.p>
             )}
             {isRevealing && (
@@ -114,9 +106,9 @@ export function BombGame({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="text-muted-foreground"
+                className="text-muted-foreground animate-pulse"
               >
-                열리는 중...
+                두근두근...
               </motion.p>
             )}
             {isSafe && (
@@ -127,7 +119,7 @@ export function BombGame({
                 exit={{ opacity: 0 }}
                 className="text-green-500 font-bold text-lg"
               >
-                안전! 🎉
+                불발탄! 살았다! 🎉
               </motion.p>
             )}
             {isExploded && (
@@ -145,8 +137,8 @@ export function BombGame({
           </AnimatePresence>
         </div>
 
-        {/* 3D 상자들 */}
-        <Box3D
+        {/* 픽셀 폭탄들 */}
+        <BombPixel
           boxes={boxes}
           selectedBox={selectedBox}
           phase={phase}

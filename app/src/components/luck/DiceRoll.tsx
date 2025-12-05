@@ -111,12 +111,104 @@ export function DiceRoll({ rollCount, currentRoll, totalSum, rolls, onRoll, onCo
         </div>
 
         {/* 픽셀아트 주사위 */}
-        <div className="h-44 flex items-center justify-center relative">
+        <div className="h-44 flex items-center justify-center relative overflow-visible">
           <DicePixel
             value={currentRoll > 0 ? currentRoll : 1}
             isRolling={isRolling}
             onRollComplete={handleRollComplete}
           />
+
+          {/* 6 나왔을 때 황금 스파클 효과 */}
+          <AnimatePresence>
+            {showReaction && !isRolling && currentRoll === 6 && (
+              <>
+                {/* 황금 광채 */}
+                <motion.div
+                  className="absolute inset-0 pointer-events-none"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: [0, 0.8, 0] }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 1 }}
+                  style={{
+                    background: "radial-gradient(circle, rgba(255,215,0,0.4) 0%, transparent 70%)",
+                  }}
+                />
+                {/* 황금 별 파티클 */}
+                {[...Array(12)].map((_, i) => (
+                  <motion.div
+                    key={`gold-star-${i}`}
+                    className="absolute pointer-events-none text-yellow-400"
+                    style={{
+                      left: "50%",
+                      top: "50%",
+                      fontSize: `${16 + Math.random() * 12}px`,
+                    }}
+                    initial={{ x: 0, y: 0, opacity: 1, scale: 0 }}
+                    animate={{
+                      x: (Math.random() - 0.5) * 150,
+                      y: (Math.random() - 0.5) * 150,
+                      opacity: [1, 1, 0],
+                      scale: [0, 1.5, 0],
+                      rotate: [0, 360],
+                    }}
+                    exit={{ opacity: 0 }}
+                    transition={{
+                      duration: 0.8,
+                      delay: i * 0.05,
+                      ease: "easeOut",
+                    }}
+                  >
+                    {i % 3 === 0 ? "★" : i % 3 === 1 ? "✦" : "✧"}
+                  </motion.div>
+                ))}
+              </>
+            )}
+          </AnimatePresence>
+
+          {/* 1 나왔을 때 어둠 효과 */}
+          <AnimatePresence>
+            {showReaction && !isRolling && currentRoll === 1 && (
+              <>
+                {/* 어두운 안개 */}
+                <motion.div
+                  className="absolute inset-0 pointer-events-none"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: [0, 0.5, 0] }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 1.2 }}
+                  style={{
+                    background: "radial-gradient(circle, rgba(50,0,0,0.4) 0%, transparent 70%)",
+                  }}
+                />
+                {/* 해골 이모지 떨어짐 */}
+                {[...Array(6)].map((_, i) => (
+                  <motion.div
+                    key={`skull-${i}`}
+                    className="absolute pointer-events-none"
+                    style={{
+                      left: `${20 + (i * 12)}%`,
+                      top: "0%",
+                      fontSize: "20px",
+                    }}
+                    initial={{ y: -20, opacity: 0, rotate: 0 }}
+                    animate={{
+                      y: [0, 120],
+                      opacity: [0, 1, 1, 0],
+                      rotate: [0, (Math.random() - 0.5) * 60],
+                    }}
+                    exit={{ opacity: 0 }}
+                    transition={{
+                      duration: 1,
+                      delay: i * 0.1,
+                      ease: "easeIn",
+                    }}
+                  >
+                    💀
+                  </motion.div>
+                ))}
+              </>
+            )}
+          </AnimatePresence>
 
           {/* 반응 이모지 */}
           <AnimatePresence>
@@ -182,10 +274,10 @@ export function DiceRoll({ rollCount, currentRoll, totalSum, rolls, onRoll, onCo
           )}
         </div>
 
-        {/* 히스토리 (미니 주사위) */}
+        {/* 히스토리 (미니 주사위) - 롤링 중에는 마지막 값 숨김 */}
         {rolls.length > 0 && (
           <div className="flex justify-center gap-1 mb-6 flex-wrap">
-            {rolls.map((roll, i) => (
+            {(isRolling ? rolls.slice(0, -1) : rolls).map((roll, i) => (
               <motion.div
                 key={i}
                 initial={{ scale: 0 }}

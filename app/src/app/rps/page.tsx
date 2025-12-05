@@ -10,9 +10,11 @@ import { Button } from "@/components/ui/button";
 import { Footer } from "@/components/Footer";
 import { RPSGame } from "@/components/rps/RPSGame";
 import { useRPSGame } from "@/lib/hooks/useRPSGame";
+import { useScreenShake } from "@/lib/hooks/useScreenShake";
 
 export default function RPSPage() {
   const router = useRouter();
+  const { shakeStyle, shake } = useScreenShake();
   const {
     phase,
     streak,
@@ -27,18 +29,19 @@ export default function RPSPage() {
     nextRound,
   } = useRPSGame();
 
-  // 게임 오버시 결과 페이지로 이동
+  // 게임 오버시 화면 흔들림 + 결과 페이지로 이동
   useEffect(() => {
     if (phase === "gameover") {
+      shake("medium");
       const timer = setTimeout(() => {
         router.push(`/rps/result?streak=${streak}`);
       }, 2000);
       return () => clearTimeout(timer);
     }
-  }, [phase, streak, router]);
+  }, [phase, streak, router, shake]);
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="flex min-h-screen flex-col bg-background" style={shakeStyle}>
       <main className="flex-1 container mx-auto px-4 py-12">
         <header className="text-center mb-8">
           <Link href="/" className="text-sm text-muted-foreground hover:underline">
