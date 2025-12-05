@@ -16,15 +16,22 @@ export default function DicePage() {
   const [phase, setPhase] = useState<"intro" | "playing" | "complete">("intro");
   const { rolls, rollCount, currentRoll, sum, isComplete, roll, reset } = useDiceGame();
 
+  // 게임 완료 시 phase 변경
   useEffect(() => {
     if (isComplete && phase === "playing") {
       setPhase("complete");
+    }
+  }, [isComplete, phase]);
+
+  // complete 상태에서 결과 페이지로 이동
+  useEffect(() => {
+    if (phase === "complete") {
       const timer = setTimeout(() => {
         router.push(`/dice/result?sum=${sum}&rolls=${rolls.join(",")}`);
       }, 2000);
       return () => clearTimeout(timer);
     }
-  }, [isComplete, sum, rolls, router, phase]);
+  }, [phase, sum, rolls, router]);
 
   const handleStart = () => {
     reset();

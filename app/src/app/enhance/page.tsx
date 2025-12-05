@@ -27,16 +27,23 @@ export default function EnhancePage() {
     stopGame,
   } = useEnhanceGame();
 
-  // 파괴 또는 종료 시 결과 페이지로
+  // 파괴 또는 종료 시 phase 변경
   useEffect(() => {
     if ((phase === "destroyed" || phase === "result") && gamePhase === "playing") {
       setGamePhase("ending");
+    }
+  }, [phase, gamePhase]);
+
+  // ending 상태에서 결과 페이지로 이동
+  useEffect(() => {
+    if (gamePhase === "ending") {
+      const delay = phase === "destroyed" ? 2000 : 500;
       const timer = setTimeout(() => {
         router.push(`/enhance/result?level=${maxLevel}&attempts=${attemptCount}`);
-      }, phase === "destroyed" ? 2000 : 500);
+      }, delay);
       return () => clearTimeout(timer);
     }
-  }, [phase, maxLevel, attemptCount, router, gamePhase]);
+  }, [gamePhase, phase, maxLevel, attemptCount, router]);
 
   const handleStart = () => {
     startGame();

@@ -25,16 +25,22 @@ export default function BombPage() {
     nextRound,
   } = useBombGame();
 
-  // 폭발시 결과 페이지로
+  // 폭발시 phase 변경
   useEffect(() => {
     if (phase === "exploded" && gamePhase === "playing") {
       setGamePhase("gameover");
+    }
+  }, [phase, gamePhase]);
+
+  // gameover 상태에서 결과 페이지로 이동
+  useEffect(() => {
+    if (gamePhase === "gameover") {
       const timer = setTimeout(() => {
         router.push(`/bomb/result?survival=${survivalCount}`);
       }, 2000);
       return () => clearTimeout(timer);
     }
-  }, [phase, survivalCount, router, gamePhase]);
+  }, [gamePhase, survivalCount, router]);
 
   const handleStart = () => {
     startGame();
