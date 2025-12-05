@@ -3,20 +3,10 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
-import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-
-// SSR에서 Three.js 로드 방지
-const Dice3D = dynamic(() => import("./Dice3D").then(mod => ({ default: mod.Dice3D })), {
-  ssr: false,
-  loading: () => (
-    <div className="w-40 h-40 flex items-center justify-center">
-      <span className="text-6xl animate-bounce">🎲</span>
-    </div>
-  ),
-});
+import { DicePixel } from "./DicePixel";
 
 interface DiceRollProps {
   rollCount: number;
@@ -120,9 +110,9 @@ export function DiceRoll({ rollCount, currentRoll, totalSum, rolls, onRoll, onCo
           </div>
         </div>
 
-        {/* 3D 주사위 */}
+        {/* 픽셀아트 주사위 */}
         <div className="h-44 flex items-center justify-center relative">
-          <Dice3D
+          <DicePixel
             value={currentRoll > 0 ? currentRoll : 1}
             isRolling={isRolling}
             onRollComplete={handleRollComplete}

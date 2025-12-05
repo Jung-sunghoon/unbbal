@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "WebSearch",
+      "WebFetch(domain:kicked-in-teeth.itch.io)",
+      "WebFetch(domain:thewisehedgehog.itch.io)"
     ],
     "deny": [],
     "ask": []
