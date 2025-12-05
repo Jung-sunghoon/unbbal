@@ -145,20 +145,20 @@ function SingleBox({
       onPointerOut={() => setHovered(false)}
     >
       {/* 상자 본체 */}
-      <RoundedBox args={[0.8, 0.6, 0.8]} radius={0.05} position={[0, 0.3, 0]}>
+      <RoundedBox args={[0.65, 0.5, 0.65]} radius={0.05} position={[0, 0.25, 0]}>
         <meshStandardMaterial color={boxColor} roughness={0.6} />
       </RoundedBox>
 
       {/* 뚜껑 */}
-      <group ref={lidRef} position={[0, 0.6, -0.35]}>
-        <RoundedBox args={[0.85, 0.15, 0.85]} radius={0.03} position={[0, 0.075, 0.35]}>
+      <group ref={lidRef} position={[0, 0.5, -0.28]}>
+        <RoundedBox args={[0.7, 0.12, 0.7]} radius={0.03} position={[0, 0.06, 0.28]}>
           <meshStandardMaterial color={boxColor} roughness={0.6} />
         </RoundedBox>
       </group>
 
       {/* 상자 안 내용물 */}
       {isOpened && (
-        <group ref={bombRef} position={[0, 0.3, 0]}>
+        <group ref={bombRef} position={[0, 0.25, 0]}>
           {hasBomb ? (
             // 폭탄 + 폭발 효과
             <group scale={explosionScale}>
@@ -175,21 +175,75 @@ function SingleBox({
               {/* 폭발 시 빛 효과 */}
               {explosionPhase === "explode" && (
                 <>
-                  <pointLight color="#FF4400" intensity={3} distance={3} />
-                  {/* 폭발 파티클 */}
-                  {[...Array(8)].map((_, i) => (
-                    <mesh
-                      key={i}
-                      position={[
-                        Math.cos(i * Math.PI / 4) * 0.4,
-                        Math.sin(Date.now() * 0.01 + i) * 0.2,
-                        Math.sin(i * Math.PI / 4) * 0.4
-                      ]}
-                    >
-                      <sphereGeometry args={[0.08, 8, 8]} />
-                      <meshBasicMaterial color="#FF6600" />
-                    </mesh>
-                  ))}
+                  <pointLight color="#FF4400" intensity={5} distance={5} />
+                  <pointLight color="#FFAA00" intensity={3} distance={3} position={[0, 0.5, 0]} />
+
+                  {/* 폭발 불꽃 파티클 */}
+                  {[...Array(16)].map((_, i) => {
+                    const angle = (i / 16) * Math.PI * 2;
+                    const radius = 0.3 + Math.sin(Date.now() * 0.02 + i) * 0.3;
+                    const yOffset = Math.sin(Date.now() * 0.015 + i * 0.5) * 0.4;
+                    return (
+                      <mesh
+                        key={`fire-${i}`}
+                        position={[
+                          Math.cos(angle) * radius,
+                          0.2 + yOffset,
+                          Math.sin(angle) * radius
+                        ]}
+                      >
+                        <sphereGeometry args={[0.06 + Math.random() * 0.04, 8, 8]} />
+                        <meshBasicMaterial color={i % 2 === 0 ? "#FF4400" : "#FFAA00"} />
+                      </mesh>
+                    );
+                  })}
+
+                  {/* 연기 파티클 */}
+                  {[...Array(12)].map((_, i) => {
+                    const angle = (i / 12) * Math.PI * 2;
+                    const time = Date.now() * 0.001;
+                    const yOffset = (time * 2 + i * 0.3) % 2;
+                    const radius = 0.2 + yOffset * 0.3;
+                    const opacity = Math.max(0, 1 - yOffset * 0.5);
+                    return (
+                      <mesh
+                        key={`smoke-${i}`}
+                        position={[
+                          Math.cos(angle + time) * radius,
+                          0.3 + yOffset * 0.8,
+                          Math.sin(angle + time) * radius
+                        ]}
+                      >
+                        <sphereGeometry args={[0.08 + yOffset * 0.1, 8, 8]} />
+                        <meshBasicMaterial
+                          color="#444444"
+                          transparent
+                          opacity={opacity * 0.7}
+                        />
+                      </mesh>
+                    );
+                  })}
+
+                  {/* 폭발 파편 */}
+                  {[...Array(10)].map((_, i) => {
+                    const angle = (i / 10) * Math.PI * 2;
+                    const speed = 0.5 + Math.random() * 0.5;
+                    const time = (Date.now() * 0.003) % 1;
+                    return (
+                      <mesh
+                        key={`debris-${i}`}
+                        position={[
+                          Math.cos(angle) * time * speed,
+                          0.2 + time * 0.5 - time * time * 0.8,
+                          Math.sin(angle) * time * speed
+                        ]}
+                        rotation={[time * 5, time * 3, time * 4]}
+                      >
+                        <boxGeometry args={[0.04, 0.04, 0.04]} />
+                        <meshBasicMaterial color="#331100" />
+                      </mesh>
+                    );
+                  })}
                 </>
               )}
               {/* 흔들림 시 경고 빛 */}
@@ -209,8 +263,8 @@ function SingleBox({
 
       {/* 번호 표시 */}
       {!isOpened && (
-        <mesh position={[0, 0.61, 0.001]} rotation={[-Math.PI / 2, 0, 0]}>
-          <planeGeometry args={[0.3, 0.3]} />
+        <mesh position={[0, 0.51, 0.001]} rotation={[-Math.PI / 2, 0, 0]}>
+          <planeGeometry args={[0.25, 0.25]} />
           <meshBasicMaterial color="#FFD700" transparent opacity={0.8} />
         </mesh>
       )}
@@ -219,23 +273,23 @@ function SingleBox({
 }
 
 export function Box3D({ boxes, selectedBox, phase, onSelectBox, onRevealComplete }: Box3DProps) {
-  // 2x3 그리드 배치
+  // 2x3 그리드 배치 (모바일에서도 보이도록 간격 조정)
   const positions: [number, number, number][] = [
-    [-1, 0, -0.5],
-    [0, 0, -0.5],
-    [1, 0, -0.5],
-    [-1, 0, 0.5],
-    [0, 0, 0.5],
-    [1, 0, 0.5],
+    [-0.9, 0, -0.45],
+    [0, 0, -0.45],
+    [0.9, 0, -0.45],
+    [-0.9, 0, 0.45],
+    [0, 0, 0.45],
+    [0.9, 0, 0.45],
   ];
 
   const canSelect = phase === "playing";
   const isRevealing = phase === "revealing";
 
   return (
-    <div className="w-full h-64">
+    <div className="w-full h-56 sm:h-64">
       <Canvas
-        camera={{ position: [0, 3, 4], fov: 40 }}
+        camera={{ position: [0, 3.5, 4.5], fov: 35 }}
         shadows
       >
         <ambientLight intensity={0.5} />
