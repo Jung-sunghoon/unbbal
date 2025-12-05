@@ -1,141 +1,49 @@
 // © 2025 운빨(unbbal). All rights reserved.
 
-"use client";
-
-import { useSearchParams } from "next/navigation";
-import { Suspense, useMemo } from "react";
-import Link from "next/link";
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Footer } from "@/components/Footer";
-import { ResultShare } from "@/components/ResultShare";
+import { Metadata } from "next";
+import { BombResultContent } from "@/components/bomb/BombResultContent";
 import { getBombGrade } from "@/lib/constants";
 
-const BOMB_MESSAGES: Record<string, string[]> = {
-  SSS: ["폭탄이 무서워하는 사람", "폭탄 해체 전문가", "운빨 만렙!"],
-  SS: ["폭탄 냄새를 맡는다", "위험 감지 능력자", "대단해!"],
-  S: ["꽤 운이 좋네", "폭탄 피하기 달인", "굿굿!"],
-  A: ["나쁘지 않아", "적당히 운이 좋아", "평균 이상!"],
-  B: ["아쉽네", "다음엔 더 잘할 수 있어", "조심조심"],
-  F: ["바로 터졌네...", "운이 없었어", "다시 도전해봐!"],
-};
-
-function BombResultContent() {
-  const searchParams = useSearchParams();
-  const survival = Number(searchParams.get("survival")) || 0;
-
-  const grade = getBombGrade(survival);
-  const message = useMemo(() => {
-    const messages = BOMB_MESSAGES[grade.grade] || [];
-    return messages[Math.floor(Math.random() * messages.length)] || "";
-  }, [grade.grade]);
-
-  const shareUrl = typeof window !== "undefined"
-    ? window.location.href
-    : "https://unbbal.site/bomb/result";
-  const shareText = `💣 폭탄 피하기: ${grade.grade} (${grade.title}) - ${survival}연속 생존!`;
-
-  // 생존 확률 계산 (16% 폭발 확률로 n번 연속 생존)
-  const survivalRate = survival > 0 ? Math.pow(5/6, survival) * 100 : 0;
-
-  return (
-    <div className="flex min-h-screen flex-col bg-background">
-      <main className="flex-1 container mx-auto px-4 py-12">
-        <header className="text-center mb-8">
-          <Link href="/" className="text-sm text-muted-foreground hover:underline">
-            ← 메인으로
-          </Link>
-          <h1 className="text-2xl font-bold mt-4">💣 폭탄 피하기 결과</h1>
-        </header>
-
-        <Card className="w-full max-w-md mx-auto mb-6 overflow-hidden">
-          <CardHeader className="text-center pb-2">
-            <motion.div
-              initial={{ scale: 0, rotate: -180 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ type: "spring", damping: 10, delay: 0.2 }}
-              className="text-7xl font-black mb-2"
-              style={{ color: grade.color }}
-            >
-              {grade.grade}
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-            >
-              <CardTitle className="text-2xl" style={{ color: grade.color }}>
-                {grade.title}
-              </CardTitle>
-            </motion.div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
-              className="text-center text-lg text-muted-foreground"
-            >
-              &quot;{message}&quot;
-            </motion.p>
-
-            {/* 생존 횟수 */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8 }}
-              className="bg-muted rounded-lg p-4 text-center"
-            >
-              <p className="text-sm text-muted-foreground">연속 생존</p>
-              <p className="text-5xl font-black" style={{ color: grade.color }}>
-                {survival}회
-              </p>
-              {survival > 0 && (
-                <p className="text-sm text-muted-foreground mt-1">
-                  확률: {survivalRate.toFixed(1)}%
-                </p>
-              )}
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1 }}
-            >
-              <ResultShare
-                title="폭탄 피하기 결과"
-                text={shareText}
-                url={shareUrl}
-              />
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.2 }}
-              className="flex gap-3"
-            >
-              <Button asChild variant="outline" className="flex-1">
-                <Link href="/bomb">다시하기</Link>
-              </Button>
-              <Button asChild className="flex-1">
-                <Link href="/">다른 게임</Link>
-              </Button>
-            </motion.div>
-          </CardContent>
-        </Card>
-      </main>
-
-      <Footer />
-    </div>
-  );
+interface PageProps {
+  searchParams: Promise<{ survival?: string }>;
 }
 
-export default function BombResultPage() {
-  return (
-    <Suspense fallback={<div className="flex min-h-screen items-center justify-center">로딩 중...</div>}>
-      <BombResultContent />
-    </Suspense>
-  );
+export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+  const params = await searchParams;
+  const survival = Number(params.survival) || 0;
+  const grade = getBombGrade(survival);
+
+  const title = `💣 ${grade.grade} (${grade.title}) - ${survival}연속 생존`;
+  const description = `폭탄 피하기 ${survival}연속 생존으로 ${grade.grade} 등급 달성!`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title: `폭탄 피하기 결과: ${grade.grade} - ${survival}연속 생존 | 운빨`,
+      description,
+      url: `https://unbbal.site/bomb/result?survival=${survival}`,
+      images: [
+        {
+          url: `https://unbbal.site/api/og/luck?grade=${grade.grade}&title=${encodeURIComponent(grade.title)}&score=${survival}`,
+          width: 1200,
+          height: 630,
+          alt: `폭탄 피하기 결과: ${grade.grade}`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `폭탄 피하기 결과: ${grade.grade} - ${survival}연속 생존`,
+      description,
+      images: [`https://unbbal.site/api/og/luck?grade=${grade.grade}&title=${encodeURIComponent(grade.title)}&score=${survival}`],
+    },
+  };
+}
+
+export default async function BombResultPage({ searchParams }: PageProps) {
+  const params = await searchParams;
+  const survival = Number(params.survival) || 0;
+
+  return <BombResultContent survival={survival} />;
 }
