@@ -40,9 +40,13 @@ function SingleBox({
 }: SingleBoxProps) {
   const groupRef = useRef<THREE.Group>(null);
   const lidRef = useRef<THREE.Group>(null);
+  const bombRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
   const [lidAngle, setLidAngle] = useState(0);
+  const [explosionPhase, setExplosionPhase] = useState<"none" | "shake" | "explode">("none");
+  const [explosionScale, setExplosionScale] = useState(1);
   const revealStartRef = useRef<number | null>(null);
+  const explosionStartRef = useRef<number | null>(null);
 
   // 호버 애니메이션
   useFrame(() => {
@@ -54,14 +58,32 @@ function SingleBox({
       targetY,
       0.1
     );
+
+    // 폭발 시 흔들림 효과
+    if (explosionPhase === "shake" && hasBomb && isSelected) {
+      const shakeIntensity = 0.05;
+      groupRef.current.rotation.z = (Math.random() - 0.5) * shakeIntensity * 2;
+      groupRef.current.rotation.x = (Math.random() - 0.5) * shakeIntensity;
+    } else if (explosionPhase !== "shake") {
+      groupRef.current.rotation.z = THREE.MathUtils.lerp(groupRef.current.rotation.z, 0, 0.1);
+      groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, 0, 0.1);
+    }
   });
 
   // 뚜껑 열림 애니메이션
   useEffect(() => {
     if (isRevealing && isSelected) {
       revealStartRef.current = Date.now();
+      if (hasBomb) {
+        // 폭탄이면 흔들림 시작
+        setTimeout(() => setExplosionPhase("shake"), 500);
+        setTimeout(() => {
+          setExplosionPhase("explode");
+          explosionStartRef.current = Date.now();
+        }, 1000);
+      }
     }
-  }, [isRevealing, isSelected]);
+  }, [isRevealing, isSelected, hasBomb]);
 
   useFrame(() => {
     if (!lidRef.current) return;
@@ -74,7 +96,8 @@ function SingleBox({
       setLidAngle(targetAngle * progress);
       lidRef.current.rotation.x = lidAngle;
 
-      if (progress >= 1 && elapsed > 800) {
+      // 폭탄이 아닌 경우만 빨리 완료
+      if (!hasBomb && progress >= 1 && elapsed > 800) {
         revealStartRef.current = null;
         onRevealComplete();
       }
@@ -82,6 +105,27 @@ function SingleBox({
       lidRef.current.rotation.x = -Math.PI * 0.7;
     } else {
       lidRef.current.rotation.x = 0;
+    }
+
+    // 폭발 애니메이션
+    if (explosionPhase === "explode" && explosionStartRef.current) {
+      const elapsed = Date.now() - explosionStartRef.current;
+      const progress = Math.min(elapsed / 500, 1);
+
+      // 폭탄이 커졌다가 작아지는 효과
+      if (progress < 0.3) {
+        setExplosionScale(1 + progress * 5);
+      } else if (progress < 0.6) {
+        setExplosionScale(2.5 - (progress - 0.3) * 3);
+      } else {
+        setExplosionScale(1.6 + Math.sin(progress * Math.PI * 4) * 0.2);
+      }
+
+      if (elapsed > 800) {
+        explosionStartRef.current = null;
+        revealStartRef.current = null;
+        onRevealComplete();
+      }
     }
   });
 
@@ -114,13 +158,45 @@ function SingleBox({
 
       {/* 상자 안 내용물 */}
       {isOpened && (
-        <group position={[0, 0.3, 0]}>
+        <group ref={bombRef} position={[0, 0.3, 0]}>
           {hasBomb ? (
-            // 폭탄
-            <mesh>
-              <sphereGeometry args={[0.2, 32, 32]} />
-              <meshStandardMaterial color="#222222" roughness={0.3} />
-            </mesh>
+            // 폭탄 + 폭발 효과
+            <group scale={explosionScale}>
+              {/* 폭탄 본체 */}
+              <mesh>
+                <sphereGeometry args={[0.2, 32, 32]} />
+                <meshStandardMaterial
+                  color={explosionPhase === "explode" ? "#FF6600" : "#222222"}
+                  roughness={0.3}
+                  emissive={explosionPhase === "explode" ? "#FF4400" : "#000000"}
+                  emissiveIntensity={explosionPhase === "explode" ? 2 : 0}
+                />
+              </mesh>
+              {/* 폭발 시 빛 효과 */}
+              {explosionPhase === "explode" && (
+                <>
+                  <pointLight color="#FF4400" intensity={3} distance={3} />
+                  {/* 폭발 파티클 */}
+                  {[...Array(8)].map((_, i) => (
+                    <mesh
+                      key={i}
+                      position={[
+                        Math.cos(i * Math.PI / 4) * 0.4,
+                        Math.sin(Date.now() * 0.01 + i) * 0.2,
+                        Math.sin(i * Math.PI / 4) * 0.4
+                      ]}
+                    >
+                      <sphereGeometry args={[0.08, 8, 8]} />
+                      <meshBasicMaterial color="#FF6600" />
+                    </mesh>
+                  ))}
+                </>
+              )}
+              {/* 흔들림 시 경고 빛 */}
+              {explosionPhase === "shake" && (
+                <pointLight color="#FF0000" intensity={2} distance={2} />
+              )}
+            </group>
           ) : (
             // 빈 상자 (체크마크)
             <mesh rotation={[0, 0, 0]}>
