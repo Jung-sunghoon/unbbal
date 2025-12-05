@@ -3,6 +3,7 @@
 
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { Toaster } from "sonner";
 import { GoogleAdSense } from "@/components/GoogleAdSense";
 import "./globals.css";
 
@@ -80,6 +81,7 @@ export default function RootLayout({
         className={`${pretendard.variable} font-sans antialiased`}
       >
         {children}
+        <Toaster position="top-center" richColors />
       </body>
     </html>
   );

@@ -2,6 +2,7 @@
 
 "use client";
 
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 
 interface ResultShareProps {
@@ -14,9 +15,9 @@ export function ResultShare({ title, text, url }: ResultShareProps) {
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(url);
-      alert("링크가 복사되었습니다!");
+      toast.success("링크가 복사되었습니다!");
     } catch {
-      alert("링크 복사에 실패했습니다.");
+      toast.error("링크 복사에 실패했습니다.");
     }
   };
 
