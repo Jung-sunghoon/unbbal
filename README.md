@@ -99,6 +99,10 @@ unbbal/
 | B | 아쉬움 |
 | F | 다음 기회에... |
 
+## 🎨 에셋 출처
+
+- Dice sprites: [Dice Roll](https://kicked-in-teeth.itch.io/dice-roll) by Kicked-in-Teeth (CC-BY-SA)
+
 ## 📄 라이선스
 
 © 2025 운빨(unbbal). All rights reserved.

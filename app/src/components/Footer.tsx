@@ -14,6 +14,18 @@ export function Footer() {
         <p className="text-sm text-muted-foreground">
           © 2025 운빨(unbbal). All rights reserved.
         </p>
+        <p className="text-xs text-muted-foreground">
+          Dice sprites by{" "}
+          <a
+            href="https://kicked-in-teeth.itch.io/dice-roll"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-foreground"
+          >
+            Kicked-in-Teeth
+          </a>{" "}
+          (CC-BY-SA)
+        </p>
       </div>
     </footer>
   );
