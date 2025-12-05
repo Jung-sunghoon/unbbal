@@ -59,7 +59,7 @@ export function FeedbackButton() {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="inline-flex items-center gap-2 px-4 py-2 bg-muted text-foreground font-medium rounded-lg hover:bg-muted/80 transition-colors"
+        className="inline-flex items-center justify-center gap-2 px-4 py-2 min-w-[160px] bg-muted text-foreground font-medium rounded-lg hover:bg-muted/80 transition-colors"
       >
         <span>💬</span>
         <span>피드백 보내기</span>
