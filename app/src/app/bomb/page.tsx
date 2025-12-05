@@ -8,22 +8,27 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Footer } from "@/components/Footer";
-import { BombGame } from "@/components/luck/BombGame";
-import { useBombGame } from "@/lib/hooks/useBombGame";
+import { WireBombGame } from "@/components/luck/WireBombGame";
+import { useWireBombGame } from "@/lib/hooks/useWireBombGame";
 
 export default function BombPage() {
   const router = useRouter();
   const [gamePhase, setGamePhase] = useState<"intro" | "playing" | "gameover">("intro");
   const {
     phase,
-    boxes,
+    wires,
+    correctOrder,
+    currentStep,
     survivalCount,
-    selectedBox,
+    lastCutWire,
     startGame,
-    selectBox,
-    confirmResult,
+    cutWire,
+    confirmCut,
     nextRound,
-  } = useBombGame();
+    getHints,
+  } = useWireBombGame();
+
+  const hints = getHints();
 
   // 폭발시 phase 변경
   useEffect(() => {
@@ -37,7 +42,7 @@ export default function BombPage() {
     if (gamePhase === "gameover") {
       const timer = setTimeout(() => {
         router.push(`/bomb/result?survival=${survivalCount}`);
-      }, 2000);
+      }, 2500);
       return () => clearTimeout(timer);
     }
   }, [gamePhase, survivalCount, router]);
@@ -54,9 +59,9 @@ export default function BombPage() {
           <Link href="/" className="text-sm text-muted-foreground hover:underline">
             ← 메인으로
           </Link>
-          <h1 className="text-3xl font-bold mt-4 mb-2">💣 폭탄 피하기</h1>
+          <h1 className="text-3xl font-bold mt-4 mb-2">💣 폭탄 해제</h1>
           <p className="text-muted-foreground">
-            6개 상자 중 폭탄을 피해라!
+            올바른 순서로 선을 잘라 폭탄을 해제하라!
           </p>
         </header>
 
@@ -79,21 +84,21 @@ export default function BombPage() {
               <h3 className="font-medium mb-3 text-center">게임 규칙</h3>
               <ul className="text-sm text-muted-foreground space-y-2">
                 <li className="flex items-center gap-2">
-                  <span>📦</span>
-                  6개 상자 중 1개에 폭탄이 숨어있어요
+                  <span>🌈</span>
+                  7개의 무지개 색 전선이 연결되어 있어요
                 </li>
                 <li className="flex items-center gap-2">
-                  <span>✅</span>
-                  안전한 상자를 열면 생존!
+                  <span>✂️</span>
+                  힌트를 보고 올바른 순서로 전선을 자르세요
                 </li>
                 <li className="flex items-center gap-2">
                   <span>💥</span>
-                  폭탄을 열면 게임 오버!
+                  순서가 틀리면 폭발!
                 </li>
               </ul>
               <div className="mt-4 pt-3 border-t border-border">
                 <p className="text-xs text-center text-muted-foreground">
-                  몇 번 연속으로 생존할 수 있을까?
+                  7개 전선을 모두 자르면 폭탄 해제 성공!
                 </p>
               </div>
             </div>
@@ -103,20 +108,23 @@ export default function BombPage() {
               size="lg"
               className="w-full bg-red-500 hover:bg-red-600"
             >
-              도전 시작!
+              폭탄 해제 시작!
             </Button>
           </motion.div>
         )}
 
         {/* 게임 플레이 */}
         {gamePhase === "playing" && phase !== "exploded" && (
-          <BombGame
+          <WireBombGame
             phase={phase}
-            boxes={boxes}
+            wires={wires}
+            correctOrder={correctOrder}
+            currentStep={currentStep}
             survivalCount={survivalCount}
-            selectedBox={selectedBox}
-            onSelectBox={selectBox}
-            onRevealComplete={confirmResult}
+            lastCutWire={lastCutWire}
+            hints={hints}
+            onCutWire={cutWire}
+            onCutComplete={confirmCut}
             onNextRound={nextRound}
           />
         )}
@@ -128,13 +136,16 @@ export default function BombPage() {
             animate={{ opacity: 1 }}
             className="text-center space-y-4"
           >
-            <BombGame
+            <WireBombGame
               phase={phase}
-              boxes={boxes}
+              wires={wires}
+              correctOrder={correctOrder}
+              currentStep={currentStep}
               survivalCount={survivalCount}
-              selectedBox={selectedBox}
-              onSelectBox={() => {}}
-              onRevealComplete={() => {}}
+              lastCutWire={lastCutWire}
+              hints={[]}
+              onCutWire={() => {}}
+              onCutComplete={() => {}}
               onNextRound={() => {}}
             />
             <motion.div
@@ -142,7 +153,6 @@ export default function BombPage() {
               animate={{ scale: 1 }}
               transition={{ type: "spring", damping: 10 }}
             >
-              <p className="text-red-500 text-2xl font-bold">💥 펑!</p>
               <p className="text-muted-foreground mt-2">결과 페이지로 이동 중...</p>
             </motion.div>
           </motion.div>
