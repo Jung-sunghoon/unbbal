@@ -2,7 +2,7 @@
 
 운빨로 놀자! 다양한 운빨 게임을 즐길 수 있는 웹 플랫폼입니다.
 
-**Live Demo**: [https://unbbal.gg](https://unbbal.gg)
+**Live Demo**: [https://unbbal.site](https://unbbal.site)
 
 ## 🎮 게임 목록
 
