@@ -3,10 +3,20 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
+import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Dice3D } from "./Dice3D";
+
+// SSR에서 Three.js 로드 방지
+const Dice3D = dynamic(() => import("./Dice3D").then(mod => ({ default: mod.Dice3D })), {
+  ssr: false,
+  loading: () => (
+    <div className="w-40 h-40 flex items-center justify-center">
+      <span className="text-6xl animate-bounce">🎲</span>
+    </div>
+  ),
+});
 
 interface DiceRollProps {
   rollCount: number;
@@ -47,8 +57,25 @@ export function DiceRoll({ rollCount, currentRoll, totalSum, rolls, onRoll }: Di
       prevRollRef.current = currentRoll;
       setIsRolling(true);
       setFloatingNumber(null);
+
+      // 안전장치: 3D 애니메이션이 2.5초 내에 완료되지 않으면 강제 완료
+      const safetyTimer = setTimeout(() => {
+        setIsRolling(prev => {
+          if (prev) {
+            // 아직 rolling 상태면 강제로 완료 처리
+            setDisplaySum(totalSum);
+            keyRef.current += 1;
+            setFloatingNumber({ value: currentRoll, key: keyRef.current });
+            setShowReaction(true);
+            return false;
+          }
+          return prev;
+        });
+      }, 2500);
+
+      return () => clearTimeout(safetyTimer);
     }
-  }, [currentRoll]);
+  }, [currentRoll, totalSum]);
 
   const handleRollComplete = useCallback(() => {
     setIsRolling(false);

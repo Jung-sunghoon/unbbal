@@ -2,11 +2,22 @@
 
 "use client";
 
+import { useEffect, useRef } from "react";
+import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Box3D } from "./Box3D";
 import type { BombGameState } from "@/lib/hooks/useBombGame";
+
+// SSR에서 Three.js 로드 방지
+const Box3D = dynamic(() => import("./Box3D").then(mod => ({ default: mod.Box3D })), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-64 flex items-center justify-center bg-muted rounded-lg">
+      <span className="text-4xl animate-pulse">📦</span>
+    </div>
+  ),
+});
 
 interface BombGameProps {
   phase: BombGameState["phase"];
@@ -30,6 +41,29 @@ export function BombGame({
   const isSafe = phase === "safe";
   const isExploded = phase === "exploded";
   const isRevealing = phase === "revealing";
+  const hasCalledComplete = useRef(false);
+
+  // 안전장치: revealing 상태가 2초 이상 지속되면 강제로 완료 처리
+  useEffect(() => {
+    if (isRevealing) {
+      hasCalledComplete.current = false;
+      const safetyTimer = setTimeout(() => {
+        if (!hasCalledComplete.current) {
+          hasCalledComplete.current = true;
+          onRevealComplete();
+        }
+      }, 2000);
+      return () => clearTimeout(safetyTimer);
+    }
+  }, [isRevealing, onRevealComplete]);
+
+  // 3D에서 완료 콜백이 오면 중복 호출 방지
+  const handleRevealComplete = () => {
+    if (!hasCalledComplete.current) {
+      hasCalledComplete.current = true;
+      onRevealComplete();
+    }
+  };
 
   return (
     <Card className="w-full max-w-lg mx-auto overflow-hidden">
@@ -117,7 +151,7 @@ export function BombGame({
           selectedBox={selectedBox}
           phase={phase}
           onSelectBox={onSelectBox}
-          onRevealComplete={onRevealComplete}
+          onRevealComplete={handleRevealComplete}
         />
 
         {/* 다음 라운드 버튼 */}

@@ -2,11 +2,21 @@
 
 "use client";
 
+import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Item3D } from "./Item3D";
 import type { EnhanceGameState, EnhanceResult } from "@/lib/hooks/useEnhanceGame";
+
+// SSR에서 Three.js 로드 방지
+const Item3D = dynamic(() => import("./Item3D").then(mod => ({ default: mod.Item3D })), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-64 flex items-center justify-center bg-muted rounded-lg">
+      <span className="text-4xl animate-pulse">⚔️</span>
+    </div>
+  ),
+});
 
 interface EnhanceGameProps {
   phase: EnhanceGameState["phase"];
