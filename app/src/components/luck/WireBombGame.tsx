@@ -7,7 +7,7 @@ import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { WireState, WIRE_COLORS } from "@/lib/hooks/useWireBombGame";
+import { WireState } from "@/lib/hooks/useWireBombGame";
 
 // SSR에서 Three.js 로드 방지
 const WireBomb3D = dynamic(() => import("./WireBomb3D").then(mod => ({ default: mod.WireBomb3D })), {
@@ -22,11 +22,8 @@ const WireBomb3D = dynamic(() => import("./WireBomb3D").then(mod => ({ default: 
 interface WireBombGameProps {
   phase: "ready" | "playing" | "cutting" | "safe" | "exploded";
   wires: WireState[];
-  correctOrder: number[];
-  currentStep: number;
   survivalCount: number;
   lastCutWire: number | null;
-  hints: string[];
   onCutWire: (wireId: number) => void;
   onCutComplete: () => void;
   onNextRound: () => void;
@@ -35,11 +32,8 @@ interface WireBombGameProps {
 export function WireBombGame({
   phase,
   wires,
-  correctOrder,
-  currentStep,
   survivalCount,
   lastCutWire,
-  hints,
   onCutWire,
   onCutComplete,
   onNextRound,
@@ -113,40 +107,20 @@ export function WireBombGame({
           </div>
         </div>
 
-        {/* 힌트 표시 */}
+        {/* 안내 메시지 */}
         <div className="text-center mb-4 min-h-[60px]">
           <AnimatePresence mode="wait">
-            {phase === "playing" && hints.length > 0 && (
+            {phase === "playing" && (
               <motion.div
-                key="hint"
+                key="playing"
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
                 className="space-y-1"
               >
-                <p className="text-sm text-muted-foreground">다음 자를 선:</p>
-                <div className="flex justify-center gap-2">
-                  {hints.map((hint, i) => {
-                    const wireInfo = WIRE_COLORS.find(w => w.name === hint);
-                    return (
-                      <motion.span
-                        key={i}
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="px-3 py-1 rounded-full text-sm font-bold"
-                        style={{
-                          backgroundColor: wireInfo?.color || "#888",
-                          color: hint === "노랑" || hint === "초록" ? "#000" : "#FFF",
-                          textShadow: hint === "노랑" || hint === "초록" ? "none" : "0 1px 2px rgba(0,0,0,0.5)"
-                        }}
-                      >
-                        {hint}
-                      </motion.span>
-                    );
-                  })}
-                </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  ({currentStep + 1}번째 선)
+                <p className="text-lg font-medium">어떤 선을 자를까요? ✂️</p>
+                <p className="text-sm text-muted-foreground">
+                  남은 선: {7 - cutCount}개 중 1개가 폭탄!
                 </p>
               </motion.div>
             )}

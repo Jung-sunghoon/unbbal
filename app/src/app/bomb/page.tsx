@@ -17,18 +17,13 @@ export default function BombPage() {
   const {
     phase,
     wires,
-    correctOrder,
-    currentStep,
     survivalCount,
     lastCutWire,
     startGame,
     cutWire,
     confirmCut,
     nextRound,
-    getHints,
   } = useWireBombGame();
-
-  const hints = getHints();
 
   // 폭발시 phase 변경
   useEffect(() => {
@@ -118,11 +113,8 @@ export default function BombPage() {
           <WireBombGame
             phase={phase}
             wires={wires}
-            correctOrder={correctOrder}
-            currentStep={currentStep}
             survivalCount={survivalCount}
             lastCutWire={lastCutWire}
-            hints={hints}
             onCutWire={cutWire}
             onCutComplete={confirmCut}
             onNextRound={nextRound}
@@ -139,11 +131,8 @@ export default function BombPage() {
             <WireBombGame
               phase={phase}
               wires={wires}
-              correctOrder={correctOrder}
-              currentStep={currentStep}
               survivalCount={survivalCount}
               lastCutWire={lastCutWire}
-              hints={[]}
               onCutWire={() => {}}
               onCutComplete={() => {}}
               onNextRound={() => {}}
