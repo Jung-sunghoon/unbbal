@@ -183,8 +183,8 @@ function useIocaineAI() {
     // 투표 시스템: 여러 전략이 같은 수를 추천하면 가중치
     const votes: Record<RPSMove, number> = { rock: 0, paper: 0, scissors: 0 };
     predictions.forEach((p, i) => {
-      const weight = 1 + (scores[p.name] || 0) * 0.1;
-      votes[p.move] += weight / (i + 1); // 순위에 따른 가중치
+      const weight = 1 + (scores[p.name] || 0) * 0.2; // 0.1 → 0.2 (성적 좋은 전략 더 신뢰)
+      votes[p.move] += weight / (i * 0.5 + 1); // 상위 전략에 더 큰 가중치
     });
 
     let bestMove: RPSMove = "rock";
@@ -361,8 +361,8 @@ export function useRPSGame() {
 
   const play = useCallback((playerMove: RPSMove) => {
     // 난이도: 연승에 따라 AI가 점점 강해짐
-    // 0연승: 40%, 5연승: 65%, 10연승: 90%
-    const difficulty = Math.min(0.4 + state.streak * 0.05, 0.9);
+    // 0연승: 55%, 5연승: 75%, 10연승: 95%
+    const difficulty = Math.min(0.55 + state.streak * 0.04, 0.95);
     const aiMove = ai.getAIMove(difficulty);
 
     const result = getRPSResult(playerMove, aiMove);
