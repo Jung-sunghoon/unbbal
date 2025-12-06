@@ -20,12 +20,14 @@ const DISPLAY_SIZE = SPRITE_SIZE * SWORD_SCALE;
 // 강화 등급별 검 위치 (sword.png에서)
 // { col, row } - 0부터 시작
 const LEVEL_SWORD_POSITIONS: Record<string, { col: number; row: number }> = {
-  "0": { col: 0, row: 4 },   // 기본 검 (회색/일반)
-  "1": { col: 2, row: 0 },   // 고급 (초록/자연)
-  "2": { col: 1, row: 0 },   // 희귀 (파랑/얼음)
-  "3": { col: 4, row: 3 },   // 영웅 (보라/마법)
-  "4": { col: 0, row: 0 },   // 전설 (주황/불꽃)
-  "5": { col: 3, row: 0 },   // 신화 (황금/태양)
+  "0": { col: 0, row: 4 },   // 기본 검 (회색)
+  "1": { col: 2, row: 0 },   // 고급 (초록)
+  "2": { col: 1, row: 0 },   // 희귀 (파랑)
+  "3": { col: 4, row: 3 },   // 영웅 (보라)
+  "4": { col: 0, row: 0 },   // 전설 (주황)
+  "5": { col: 3, row: 0 },   // 신화 (황금)
+  "6": { col: 5, row: 1 },   // 초월 (시안)
+  "7": { col: 4, row: 0 },   // LEGEND (핑크)
 };
 
 // 레벨을 등급으로 변환
@@ -33,9 +35,11 @@ function getLevelTier(level: number): string {
   if (level <= 3) return "0";   // +0~3 기본
   if (level <= 6) return "1";   // +4~6 고급
   if (level <= 9) return "2";   // +7~9 희귀
-  if (level <= 11) return "3";  // +10~11 영웅
-  if (level <= 14) return "4";  // +12~14 전설
-  return "5";                   // +15+ 신화
+  if (level <= 14) return "3";  // +10~14 영웅
+  if (level <= 19) return "4";  // +15~19 전설
+  if (level <= 24) return "5";  // +20~24 신화
+  if (level <= 29) return "6";  // +25~29 초월
+  return "7";                   // +30 LEGEND
 }
 
 // 등급별 글로우 색상
@@ -46,6 +50,8 @@ const TIER_GLOW: Record<string, string> = {
   "3": "rgba(168, 85, 247, 0.5)",  // 보라
   "4": "rgba(249, 115, 22, 0.5)",  // 주황
   "5": "rgba(234, 179, 8, 0.6)",   // 황금
+  "6": "rgba(0, 255, 255, 0.6)",   // 시안 (초월)
+  "7": "rgba(255, 0, 255, 0.7)",   // 핑크 (LEGEND)
 };
 
 // 스파클 파티클 위치 (8개)
@@ -349,6 +355,64 @@ export function SwordPixel({ level, isEnhancing, isDestroyed }: SwordPixelProps)
                 }}
                 transition={{ duration: 1.5, repeat: Infinity }}
               />
+            )}
+
+            {/* 초월 등급 특별 이펙트 */}
+            {tier === "6" && !isEnhancing && (
+              <motion.div
+                className="absolute inset-0 pointer-events-none"
+                animate={{
+                  background: [
+                    "radial-gradient(circle, rgba(0,255,255,0.2) 0%, transparent 70%)",
+                    "radial-gradient(circle, rgba(0,255,255,0.5) 0%, transparent 70%)",
+                    "radial-gradient(circle, rgba(0,255,255,0.2) 0%, transparent 70%)",
+                  ],
+                }}
+                transition={{ duration: 1.2, repeat: Infinity }}
+              />
+            )}
+
+            {/* LEGEND 등급 특별 이펙트 - 무지개 */}
+            {tier === "7" && !isEnhancing && (
+              <>
+                <motion.div
+                  className="absolute inset-0 pointer-events-none"
+                  animate={{
+                    background: [
+                      "radial-gradient(circle, rgba(255,0,255,0.3) 0%, transparent 70%)",
+                      "radial-gradient(circle, rgba(255,100,255,0.5) 0%, transparent 70%)",
+                      "radial-gradient(circle, rgba(255,0,255,0.3) 0%, transparent 70%)",
+                    ],
+                  }}
+                  transition={{ duration: 1, repeat: Infinity }}
+                />
+                {/* 무지개 파티클 */}
+                {[...Array(6)].map((_, i) => (
+                  <motion.div
+                    key={`legend-particle-${i}`}
+                    className="absolute pointer-events-none"
+                    style={{
+                      left: "50%",
+                      top: "50%",
+                      width: 8,
+                      height: 8,
+                      borderRadius: "50%",
+                      background: `hsl(${i * 60}, 100%, 60%)`,
+                    }}
+                    animate={{
+                      x: [0, Math.cos(i * 60 * Math.PI / 180) * 60],
+                      y: [0, Math.sin(i * 60 * Math.PI / 180) * 60],
+                      opacity: [0, 1, 0],
+                      scale: [0, 1.5, 0],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      delay: i * 0.3,
+                    }}
+                  />
+                ))}
+              </>
             )}
           </>
         ) : (
