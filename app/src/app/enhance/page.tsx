@@ -39,13 +39,28 @@ export default function EnhancePage() {
     }
   }, [phase, gamePhase, shake]);
 
-  // ending 상태에서 결과 페이지로 이동
+  // ending 상태에서 결과 저장 및 이동
   useEffect(() => {
     if (gamePhase === "ending") {
       const delay = phase === "destroyed" ? 2000 : 500;
-      const timer = setTimeout(() => {
-        sessionStorage.setItem("enhance_completed", "true");
-        router.push(`/enhance/result?level=${maxLevel}&attempts=${attemptCount}`);
+      const timer = setTimeout(async () => {
+        try {
+          const res = await fetch("/api/results", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              gameType: "enhance",
+              score: maxLevel,
+              metadata: { attempts: attemptCount },
+            }),
+          });
+          const data = await res.json();
+          if (data.id) {
+            router.push(`/result/${data.id}`);
+          }
+        } catch (error) {
+          console.error("Failed to save result:", error);
+        }
       }, delay);
       return () => clearTimeout(timer);
     }

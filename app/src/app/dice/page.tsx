@@ -21,11 +21,26 @@ export default function DicePage() {
     setPhase("playing");
   };
 
-  const handleComplete = useCallback(() => {
-    // 애니메이션 끝난 후 1.5초 뒤 결과 페이지로 이동
-    setTimeout(() => {
-      sessionStorage.setItem("dice_completed", "true");
-      router.push(`/dice/result?sum=${sum}&rolls=${rolls.join(",")}`);
+  const handleComplete = useCallback(async () => {
+    // 애니메이션 끝난 후 결과 저장 및 이동
+    setTimeout(async () => {
+      try {
+        const res = await fetch("/api/results", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            gameType: "dice",
+            score: sum,
+            metadata: { rolls },
+          }),
+        });
+        const data = await res.json();
+        if (data.id) {
+          router.push(`/result/${data.id}`);
+        }
+      } catch (error) {
+        console.error("Failed to save result:", error);
+      }
     }, 1500);
   }, [router, sum, rolls]);
 

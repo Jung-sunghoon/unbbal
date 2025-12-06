@@ -29,13 +29,28 @@ export default function RPSPage() {
     nextRound,
   } = useRPSGame();
 
-  // 게임 오버시 화면 흔들림 + 결과 페이지로 이동
+  // 게임 오버시 화면 흔들림 + 결과 저장 및 이동
   useEffect(() => {
     if (phase === "gameover") {
       shake("medium");
-      const timer = setTimeout(() => {
-        sessionStorage.setItem("rps_completed", "true");
-        router.push(`/rps/result?streak=${streak}`);
+      const timer = setTimeout(async () => {
+        try {
+          const res = await fetch("/api/results", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              gameType: "rps",
+              score: streak,
+              metadata: { totalRounds: streak + 1 },
+            }),
+          });
+          const data = await res.json();
+          if (data.id) {
+            router.push(`/result/${data.id}`);
+          }
+        } catch (error) {
+          console.error("Failed to save result:", error);
+        }
       }, 2000);
       return () => clearTimeout(timer);
     }

@@ -60,12 +60,27 @@ export default function BombPage() {
     }
   }, [phase, gamePhase, shake]);
 
-  // gameover 상태에서 결과 페이지로 이동
+  // gameover 상태에서 결과 저장 및 이동
   useEffect(() => {
     if (gamePhase === "gameover") {
-      const timer = setTimeout(() => {
-        sessionStorage.setItem("bomb_completed", "true");
-        router.push(`/bomb/result?survival=${survivalCount}`);
+      const timer = setTimeout(async () => {
+        try {
+          const res = await fetch("/api/results", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              gameType: "bomb",
+              score: survivalCount,
+              metadata: { finalRound: survivalCount + 1 },
+            }),
+          });
+          const data = await res.json();
+          if (data.id) {
+            router.push(`/result/${data.id}`);
+          }
+        } catch (error) {
+          console.error("Failed to save result:", error);
+        }
       }, 2500);
       return () => clearTimeout(timer);
     }
