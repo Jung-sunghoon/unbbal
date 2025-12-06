@@ -12,6 +12,7 @@ import { ResultShare } from "@/components/ResultShare";
 import { RegisterModal } from "@/components/ranking/RegisterModal";
 import { GameType } from "@/lib/supabase/client";
 import { getEnhanceGrade, getDiceGrade, getBombGrade } from "@/lib/constants";
+import { formatProbability } from "@/lib/enhance-probability";
 
 interface ResultPageContentProps {
   id: string;
@@ -63,7 +64,9 @@ const GAME_MESSAGES: Record<GameType, Record<string, string[]>> = {
     F: ["바로 터졌네...", "운이 없었어", "다시 도전해봐!"],
   },
   enhance: {
-    SSS: ["강화의 신 그 자체", "운빨 만렙!", "레전드 장인"],
+    LEGEND: ["신화 달성...", "이게 가능해?!", "역대급 운빨"],
+    EX: ["초월자의 경지", "인간 승리", "경이로운 기록"],
+    SSS: ["강화의 신 그 자체", "운빨 만렙!", "대장인"],
     SS: ["대단한 실력이야", "프로 강화러", "운이 좋았어!"],
     S: ["꽤 잘했어!", "나쁘지 않은 결과", "럭키!"],
     A: ["평균 이상이야", "무난한 결과", "괜찮아!"],
@@ -219,9 +222,24 @@ export function ResultPageContent({
               )}
 
               {gameType === "enhance" && typeof metadata.attempts === "number" && (
-                <p className="text-sm text-muted-foreground mt-2">
-                  시도 횟수: {metadata.attempts}회
-                </p>
+                <div className="mt-3 pt-3 border-t border-border space-y-1">
+                  <p className="text-sm text-muted-foreground">
+                    시도 횟수: {metadata.attempts}회
+                  </p>
+                  {typeof metadata.cumulativeProbability === "number" && (
+                    <p className="text-sm text-muted-foreground">
+                      누적 확률: {formatProbability(metadata.cumulativeProbability)}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {gameType === "rps" && typeof metadata.fireCount === "number" && metadata.fireCount > 0 && (
+                <div className="mt-3 pt-3 border-t border-border">
+                  <p className="text-sm text-[#F59E0B]">
+                    🔥 불타오른 횟수: {metadata.fireCount}회
+                  </p>
+                </div>
               )}
             </motion.div>
 

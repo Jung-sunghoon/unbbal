@@ -19,7 +19,7 @@ interface EnhanceRates {
   destroy: number;
 }
 
-// 강화 확률 테이블
+// 강화 확률 테이블 (30강까지)
 function getEnhanceRates(level: number): EnhanceRates {
   if (level <= 6) {
     return { success: 70, fail: 30, destroy: 0 };
@@ -27,8 +27,14 @@ function getEnhanceRates(level: number): EnhanceRates {
     return { success: 50, fail: 30, destroy: 20 };
   } else if (level <= 14) {
     return { success: 30, fail: 40, destroy: 30 };
-  } else {
+  } else if (level <= 19) {
     return { success: 10, fail: 40, destroy: 50 };
+  } else if (level <= 24) {
+    return { success: 5, fail: 35, destroy: 60 };
+  } else if (level <= 29) {
+    return { success: 3, fail: 27, destroy: 70 };
+  } else {
+    return { success: 1, fail: 19, destroy: 80 };
   }
 }
 

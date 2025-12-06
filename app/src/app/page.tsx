@@ -1,5 +1,6 @@
 // © 2025 운빨(unbbal). All rights reserved.
 
+import Link from "next/link";
 import { TestCard } from "@/components/TestCard";
 import { Footer } from "@/components/Footer";
 
@@ -69,6 +70,15 @@ export default function Home() {
             description="AI 상대로 몇 연승 가능?"
             accentColor="#10B981"
           />
+        </div>
+
+        <div className="mt-8 text-center">
+          <Link
+            href="/ranking"
+            className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            🏆 명예의 전당 보기
+          </Link>
         </div>
       </main>
 

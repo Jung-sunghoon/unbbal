@@ -41,10 +41,12 @@ export function getBombGrade(survival: number): GradeInfo {
 }
 
 // ===== 강화 시뮬레이터 =====
-// 최고 강화 수치
+// 최고 강화 수치 (30강까지)
 export const ENHANCE_GRADES: Array<{ minLevel: number } & GradeInfo> = [
-  { minLevel: 15, grade: "SSS", title: "강화의 신", color: "#FFD700" },
-  { minLevel: 12, grade: "SS", title: "장인", color: "#FFA500" },
+  { minLevel: 30, grade: "LEGEND", title: "신화", color: "#FF00FF" },
+  { minLevel: 25, grade: "EX", title: "초월자", color: "#00FFFF" },
+  { minLevel: 20, grade: "SSS", title: "강화의 신", color: "#FFD700" },
+  { minLevel: 15, grade: "SS", title: "장인", color: "#FFA500" },
   { minLevel: 10, grade: "S", title: "럭키", color: "#32CD32" },
   { minLevel: 7, grade: "A", title: "평균", color: "#4169E1" },
   { minLevel: 4, grade: "B", title: "아쉬움", color: "#9370DB" },

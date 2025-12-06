@@ -11,6 +11,7 @@ import { Footer } from "@/components/Footer";
 import { EnhanceGame } from "@/components/luck/EnhanceGame";
 import { useEnhanceGame } from "@/lib/hooks/useEnhanceGame";
 import { useScreenShake } from "@/lib/hooks/useScreenShake";
+import { calculateCumulativeProbability } from "@/lib/enhance-probability";
 
 export default function EnhancePage() {
   const router = useRouter();
@@ -51,7 +52,10 @@ export default function EnhancePage() {
             body: JSON.stringify({
               gameType: "enhance",
               score: maxLevel,
-              metadata: { attempts: attemptCount },
+              metadata: {
+                attempts: attemptCount,
+                cumulativeProbability: calculateCumulativeProbability(maxLevel),
+              },
             }),
           });
           const data = await res.json();
@@ -138,8 +142,14 @@ export default function EnhancePage() {
                 <div><span className="text-green-500">50%</span> / <span className="text-red-400">20% 파괴</span></div>
                 <div className="text-muted-foreground">+10~+14:</div>
                 <div><span className="text-green-500">30%</span> / <span className="text-red-400">30% 파괴</span></div>
-                <div className="text-muted-foreground">+15+:</div>
+                <div className="text-muted-foreground">+15~+19:</div>
                 <div><span className="text-green-500">10%</span> / <span className="text-red-400">50% 파괴</span></div>
+                <div className="text-muted-foreground">+20~+24:</div>
+                <div><span className="text-green-500">5%</span> / <span className="text-red-400">60% 파괴</span></div>
+                <div className="text-muted-foreground">+25~+29:</div>
+                <div><span className="text-green-500">3%</span> / <span className="text-red-400">70% 파괴</span></div>
+                <div className="text-muted-foreground">+30:</div>
+                <div><span className="text-green-500">1%</span> / <span className="text-red-400">80% 파괴</span></div>
               </div>
             </div>
 

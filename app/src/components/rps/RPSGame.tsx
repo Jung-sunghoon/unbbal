@@ -18,6 +18,8 @@ interface RPSGameProps {
   aiMood: RPSGameState["aiMood"];
   aiMessage: string;
   aiName: string;
+  isOnFire?: boolean;
+  fireCount?: number;
   onPlay: (move: RPSMove) => void;
 }
 
@@ -39,6 +41,8 @@ export function RPSGame({
   aiMood,
   aiMessage,
   aiName,
+  isOnFire = false,
+  fireCount = 0,
   onPlay,
 }: RPSGameProps) {
   const isRevealing = phase === "revealing";
@@ -77,17 +81,33 @@ export function RPSGame({
             initial={{ scale: 1.5 }}
             animate={{ scale: 1 }}
             className="text-3xl font-black"
-            style={{ color: streak >= 5 ? "#F59E0B" : streak >= 3 ? "#10B981" : "inherit" }}
+            style={{ color: isOnFire ? "#F59E0B" : streak >= 3 ? "#10B981" : "inherit" }}
           >
-            {streak} 연승
+            {isOnFire && (
+              <motion.span
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 0.5, repeat: Infinity }}
+              >
+                🔥
+              </motion.span>
+            )}
+            {" "}{streak} 연승{" "}
+            {isOnFire && (
+              <motion.span
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 0.5, repeat: Infinity, delay: 0.25 }}
+              >
+                🔥
+              </motion.span>
+            )}
           </motion.div>
-          {streak >= 5 && (
+          {isOnFire && (
             <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-sm text-[#F59E0B]"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-sm text-[#F59E0B] font-medium"
             >
-              불타오르는 연승!
+              불타오르는 중! ({fireCount}회 달성)
             </motion.p>
           )}
         </div>

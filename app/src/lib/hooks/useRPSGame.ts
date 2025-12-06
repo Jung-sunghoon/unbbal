@@ -10,6 +10,8 @@ export interface RPSGameState {
   streak: number;
   bestStreak: number;
   totalGames: number;
+  fireCount: number; // 5연승 달성 횟수
+  isOnFire: boolean; // 현재 불타오르는 중 (5연승 이상)
   playerMove: RPSMove | null;
   aiMove: RPSMove | null;
   roundResult: "win" | "lose" | "draw" | null;
@@ -329,6 +331,8 @@ export function useRPSGame() {
     streak: 0,
     bestStreak: 0,
     totalGames: 0,
+    fireCount: 0,
+    isOnFire: false,
     playerMove: null,
     aiMove: null,
     roundResult: null,
@@ -345,6 +349,8 @@ export function useRPSGame() {
       streak: 0,
       bestStreak: 0,
       totalGames: 0,
+      fireCount: 0,
+      isOnFire: false,
       playerMove: null,
       aiMove: null,
       roundResult: null,
@@ -367,6 +373,10 @@ export function useRPSGame() {
     const mood = getAIMood(newStreak, result);
     const message = getAIMessage(mood, result);
 
+    // 5연승 달성 체크 (5, 10, 15... 연승마다 fireCount 증가)
+    const justHitFire = result === "win" && newStreak > 0 && newStreak % 5 === 0;
+    const newIsOnFire = newStreak >= 5;
+
     // 먼저 revealing 단계로 (드라마틱 연출)
     setState(prev => ({
       ...prev,
@@ -384,6 +394,8 @@ export function useRPSGame() {
         streak: newStreak,
         bestStreak: newBestStreak,
         totalGames: prev.totalGames + 1,
+        fireCount: justHitFire ? prev.fireCount + 1 : prev.fireCount,
+        isOnFire: newIsOnFire,
         aiMood: mood,
         aiMessage: message,
       }));
@@ -410,6 +422,8 @@ export function useRPSGame() {
       streak: 0,
       bestStreak: 0,
       totalGames: 0,
+      fireCount: 0,
+      isOnFire: false,
       playerMove: null,
       aiMove: null,
       roundResult: null,

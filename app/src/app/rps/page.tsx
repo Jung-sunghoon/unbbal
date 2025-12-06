@@ -18,6 +18,9 @@ export default function RPSPage() {
   const {
     phase,
     streak,
+    bestStreak,
+    fireCount,
+    isOnFire,
     playerMove,
     aiMove,
     roundResult,
@@ -41,7 +44,10 @@ export default function RPSPage() {
             body: JSON.stringify({
               gameType: "rps",
               score: streak,
-              metadata: { totalRounds: streak + 1 },
+              metadata: {
+                totalRounds: streak + 1,
+                fireCount: fireCount,
+              },
             }),
           });
           const data = await res.json();
@@ -54,7 +60,7 @@ export default function RPSPage() {
       }, 2000);
       return () => clearTimeout(timer);
     }
-  }, [phase, streak, router, shake]);
+  }, [phase, streak, fireCount, router, shake]);
 
   return (
     <div className="flex min-h-screen flex-col bg-background" style={shakeStyle}>
@@ -141,6 +147,8 @@ export default function RPSPage() {
               aiMood={aiMood}
               aiMessage={aiMessage}
               aiName={aiName}
+              isOnFire={isOnFire}
+              fireCount={fireCount}
               onPlay={play}
             />
 
@@ -179,6 +187,8 @@ export default function RPSPage() {
               aiMood={aiMood}
               aiMessage={aiMessage}
               aiName={aiName}
+              isOnFire={isOnFire}
+              fireCount={fireCount}
               onPlay={() => {}}
             />
             <motion.div
