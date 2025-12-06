@@ -82,9 +82,9 @@ export default function Home() {
             href="/coin"
             image="/dotImg/coin/coin.png"
             spriteConfig={{
-              width: 50,
-              height: 50,
-              bgSize: "400px 50px",
+              width: 48,
+              height: 48,
+              bgSize: "384px 48px",
               bgPosition: "0 0",
             }}
             title="동전 던지기"
