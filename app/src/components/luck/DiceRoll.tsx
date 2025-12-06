@@ -133,21 +133,23 @@ export function DiceRoll({ rollCount, baseRollCount, currentRoll, totalSum, roll
           </div>
         </div>
 
-        {/* 보너스 획득 알림 */}
-        <AnimatePresence>
-          {showBonusGain && !isRolling && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="mb-4 p-2 rounded-lg bg-amber-100 dark:bg-amber-900/30 text-center"
-            >
-              <span className="text-sm font-medium text-amber-700 dark:text-amber-400">
-                🎁 보너스 굴림 획득!
-              </span>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* 보너스 획득 알림 - 고정 높이로 레이아웃 시프트 방지 */}
+        <div className="h-10 mb-4">
+          <AnimatePresence>
+            {showBonusGain && !isRolling && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="p-2 rounded-lg bg-amber-100 dark:bg-amber-900/30 text-center"
+              >
+                <span className="text-sm font-medium text-amber-700 dark:text-amber-400">
+                  🎁 보너스 굴림 획득!
+                </span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
         {/* 픽셀아트 주사위 */}
         <div className="h-44 flex items-center justify-center relative overflow-visible">

@@ -66,8 +66,8 @@ export function BombGame({
   return (
     <Card className="w-full max-w-lg mx-auto overflow-hidden">
       <CardContent className="p-6">
-        {/* 생존 카운터 */}
-        <div className="text-center mb-4">
+        {/* 생존 카운터 - 고정 높이로 레이아웃 시프트 방지 */}
+        <div className="text-center mb-4 h-14">
           <motion.div
             key={survivalCount}
             initial={{ scale: 1.5 }}
@@ -152,30 +152,32 @@ export function BombGame({
           onRevealComplete={handleRevealComplete}
         />
 
-        {/* 힌트 버튼 */}
-        {phase === "playing" && (
-          <div className="mt-4 text-center">
-            {hintAvailable ? (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-              >
-                <Button
-                  onClick={onUseHint}
-                  variant="outline"
-                  size="sm"
-                  className="text-amber-600 border-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20"
+        {/* 힌트 버튼 - 고정 높이로 레이아웃 시프트 방지 */}
+        <div className="mt-4 text-center h-9">
+          {phase === "playing" && (
+            <>
+              {hintAvailable ? (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
                 >
-                  💡 힌트 사용 (1회)
-                </Button>
-              </motion.div>
-            ) : (
-              <p className="text-xs text-muted-foreground">
-                {hintUsed ? "💡 힌트를 이미 사용했어요" : ""}
-              </p>
-            )}
-          </div>
-        )}
+                  <Button
+                    onClick={onUseHint}
+                    variant="outline"
+                    size="sm"
+                    className="text-amber-600 border-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20"
+                  >
+                    💡 힌트 사용 (1회)
+                  </Button>
+                </motion.div>
+              ) : hintUsed ? (
+                <p className="text-xs text-muted-foreground">
+                  💡 힌트를 이미 사용했어요
+                </p>
+              ) : null}
+            </>
+          )}
+        </div>
 
         {/* 다음 라운드 버튼 */}
         <div className="mt-4 h-12">

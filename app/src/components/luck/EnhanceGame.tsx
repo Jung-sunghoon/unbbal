@@ -149,18 +149,18 @@ export function EnhanceGame({
                 <span className="text-red-500">파괴 {rates.destroy}%</span>
               )}
             </div>
-            {/* 스택 표시 */}
-            {failStack > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: -5 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mt-2 pt-2 border-t border-border"
-              >
-                <p className="text-xs text-center text-orange-400">
+            {/* 스택 표시 - 고정 높이로 레이아웃 시프트 방지 */}
+            <div className="mt-2 pt-2 border-t border-border h-6">
+              {failStack > 0 && (
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-xs text-center text-orange-400"
+                >
                   🔥 연속 실패 스택: {failStack}/10 (성공률 +{stackBonus}%)
-                </p>
-              </motion.div>
-            )}
+                </motion.p>
+              )}
+            </div>
             {level >= 7 && (
               <p className="text-xs text-center text-red-400 mt-2">
                 ⚠️ 파괴 시 게임 오버!
