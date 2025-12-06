@@ -4,7 +4,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ResultPageContent } from "@/components/result/ResultPageContent";
 import { supabase, GameType } from "@/lib/supabase/client";
-import { getEnhanceGrade, getDiceGrade, getBombGrade } from "@/lib/constants";
+import { getEnhanceGrade, getDiceGrade, getBombGrade, getCoinGrade } from "@/lib/constants";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -27,6 +27,8 @@ function getGrade(gameType: GameType, score: number) {
       if (score >= 3) return { grade: "A", title: "초보", color: "#4169E1" };
       if (score >= 1) return { grade: "B", title: "입문", color: "#9370DB" };
       return { grade: "F", title: "...", color: "#DC143C" };
+    case "coin":
+      return getCoinGrade(score);
     default:
       return { grade: "?", title: "알 수 없음", color: "#666666" };
   }
@@ -38,6 +40,7 @@ const GAME_TITLES: Record<GameType, string> = {
   bomb: "폭탄 피하기",
   enhance: "강화 시뮬레이터",
   rps: "AI 가위바위보",
+  coin: "동전 던지기",
 };
 
 // 게임별 이모지
@@ -46,6 +49,7 @@ const GAME_EMOJIS: Record<GameType, string> = {
   bomb: "💣",
   enhance: "⚔️",
   rps: "✊",
+  coin: "🪙",
 };
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

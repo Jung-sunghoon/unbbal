@@ -11,7 +11,7 @@ import { Footer } from "@/components/Footer";
 import { ResultShare } from "@/components/ResultShare";
 import { RegisterModal } from "@/components/ranking/RegisterModal";
 import { GameType } from "@/lib/supabase/client";
-import { getEnhanceGrade, getDiceGrade, getBombGrade } from "@/lib/constants";
+import { getEnhanceGrade, getDiceGrade, getBombGrade, getCoinGrade } from "@/lib/constants";
 import { formatProbability } from "@/lib/enhance-probability";
 
 interface ResultPageContentProps {
@@ -40,6 +40,8 @@ function getGrade(gameType: GameType, score: number) {
       if (score >= 3) return { grade: "A", title: "초보", color: "#4169E1" };
       if (score >= 1) return { grade: "B", title: "입문", color: "#9370DB" };
       return { grade: "F", title: "...", color: "#DC143C" };
+    case "coin":
+      return getCoinGrade(score);
     default:
       return { grade: "?", title: "알 수 없음", color: "#666666" };
   }
@@ -81,6 +83,14 @@ const GAME_MESSAGES: Record<GameType, Record<string, string[]>> = {
     B: ["다음엔 더 잘할 수 있어요!", "아쉽네요", "화이팅!"],
     F: ["AI가 너무 강했나봐요...", "다시 도전해봐요!", "ㅠㅠ"],
   },
+  coin: {
+    SSS: ["예언자의 경지!", "동전이 말을 걸어왔나?", "운빨 만렙!"],
+    SS: ["점쟁이 재능 있어", "감이 좋네!", "대단해!"],
+    S: ["꽤 잘 맞추네", "운이 좋았어", "굿!"],
+    A: ["괜찮은 결과야", "나쁘지 않아", "평균 이상!"],
+    B: ["다음엔 더 잘할 수 있어", "아쉽네", "화이팅!"],
+    F: ["50:50인데...", "운이 없었어", "다시 도전!"],
+  },
 };
 
 // 게임별 정보
@@ -112,6 +122,13 @@ const GAME_INFO: Record<GameType, { title: string; emoji: string; path: string; 
     path: "/rps",
     scoreLabel: "연승",
     scoreFormat: (score) => `${score}연승`,
+  },
+  coin: {
+    title: "동전 던지기",
+    emoji: "🪙",
+    path: "/coin",
+    scoreLabel: "연속 정답",
+    scoreFormat: (score) => `${score}회`,
   },
 };
 
@@ -239,6 +256,26 @@ export function ResultPageContent({
                   <p className="text-sm text-[#F59E0B]">
                     🔥 불타오른 횟수: {metadata.fireCount}회
                   </p>
+                </div>
+              )}
+
+              {gameType === "coin" && Array.isArray(metadata.history) && metadata.history.length > 0 && (
+                <div className="mt-3 pt-3 border-t border-border">
+                  <p className="text-xs text-muted-foreground mb-2">맞춘 기록</p>
+                  <div className="flex justify-center gap-1 flex-wrap">
+                    {(metadata.history as Array<{ correct: boolean }>).map((record, i) => (
+                      <span
+                        key={i}
+                        className={`w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center ${
+                          record.correct
+                            ? "bg-green-100 dark:bg-green-900/50 text-green-600 dark:text-green-400"
+                            : "bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400"
+                        }`}
+                      >
+                        {record.correct ? "O" : "X"}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               )}
             </motion.div>

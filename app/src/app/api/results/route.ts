@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     const { gameType, score, metadata = {} } = body;
 
     // 유효성 검사
-    if (!gameType || !["dice", "bomb", "enhance", "rps"].includes(gameType)) {
+    if (!gameType || !["dice", "bomb", "enhance", "rps", "coin"].includes(gameType)) {
       return NextResponse.json(
         { error: "Invalid game type" },
         { status: 400 }
@@ -36,6 +36,7 @@ export async function POST(request: NextRequest) {
       bomb: 100,     // 생존 횟수 (합리적 상한)
       enhance: 30,   // 강화 수치 (합리적 상한)
       rps: 100,      // 연승 횟수 (합리적 상한)
+      coin: 100,     // 연속 맞춘 횟수 (합리적 상한)
     };
 
     if (score > maxScores[gameType]) {

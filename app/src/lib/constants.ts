@@ -58,6 +58,22 @@ export function getEnhanceGrade(level: number): GradeInfo {
   return found || ENHANCE_GRADES[ENHANCE_GRADES.length - 1];
 }
 
+// ===== 동전 던지기 게임 =====
+// 연속 맞춘 횟수 (50% 확률)
+export const COIN_GRADES: Array<{ minStreak: number } & GradeInfo> = [
+  { minStreak: 10, grade: "SSS", title: "예언자", color: "#FFD700" },
+  { minStreak: 8, grade: "SS", title: "점쟁이", color: "#FFA500" },
+  { minStreak: 6, grade: "S", title: "감 좋은 녀석", color: "#32CD32" },
+  { minStreak: 4, grade: "A", title: "운 괜찮네", color: "#4169E1" },
+  { minStreak: 2, grade: "B", title: "평범", color: "#9370DB" },
+  { minStreak: 0, grade: "F", title: "찍기 실패", color: "#DC143C" },
+];
+
+export function getCoinGrade(streak: number): GradeInfo {
+  const found = COIN_GRADES.find((g) => streak >= g.minStreak);
+  return found || COIN_GRADES[COIN_GRADES.length - 1];
+}
+
 // 등급별 메시지
 export const GRADE_MESSAGES: Record<string, string[]> = {
   SSS: ["오늘 로또 사도 됨", "가챠 지금 당장 돌려", "이 운빨 실화냐?"],

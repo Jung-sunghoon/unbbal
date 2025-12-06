@@ -24,6 +24,8 @@ function formatScore(score: number, gameType: GameType): string {
       return `+${score}`;
     case "rps":
       return `${score}연승`;
+    case "coin":
+      return `${score}회`;
     default:
       return `${score}`;
   }
@@ -35,6 +37,7 @@ const GAME_COLORS: Record<GameType, string> = {
   bomb: "#EF4444",
   enhance: "#A855F7",
   rps: "#10B981",
+  coin: "#FFD700",
 };
 
 // 순위별 스타일

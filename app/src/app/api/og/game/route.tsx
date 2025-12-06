@@ -5,7 +5,7 @@ import { NextRequest } from "next/server";
 
 export const runtime = "edge";
 
-type GameType = "dice" | "bomb" | "enhance" | "rps";
+type GameType = "dice" | "bomb" | "enhance" | "rps" | "coin";
 
 const GAME_INFO: Record<GameType, { emoji: string; name: string; bgColor: string; description: string }> = {
   dice: {
@@ -31,6 +31,12 @@ const GAME_INFO: Record<GameType, { emoji: string; name: string; bgColor: string
     name: "AI 가위바위보",
     bgColor: "#D1FAE5",
     description: "AI 상대로 연승 도전!",
+  },
+  coin: {
+    emoji: "🪙",
+    name: "동전 던지기",
+    bgColor: "#FEF9C3",
+    description: "앞면? 뒷면? 연속으로 맞춰봐!",
   },
 };
 

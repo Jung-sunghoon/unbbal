@@ -1,5 +1,6 @@
 // © 2025 운빨(unbbal). All rights reserved.
 
+import Image from "next/image";
 import Link from "next/link";
 import { TestCard } from "@/components/TestCard";
 import { Footer } from "@/components/Footer";
@@ -9,10 +10,17 @@ export default function Home() {
     <div className="flex min-h-screen flex-col bg-background">
       <main className="flex-1 container mx-auto px-4 py-12">
         <header className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-2">
-            <span className="mr-2">🍀</span>
-            운빨
-          </h1>
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <Image
+              src="/favicon.png"
+              alt="운빨 로고"
+              width={48}
+              height={48}
+              className="rounded-lg"
+              style={{ imageRendering: "pixelated" }}
+            />
+            <h1 className="text-4xl font-bold">운빨</h1>
+          </div>
           <p className="text-lg text-muted-foreground">
             운빨로 놀자!
           </p>
@@ -69,6 +77,19 @@ export default function Home() {
             title="AI 가위바위보"
             description="AI 상대로 몇 연승 가능?"
             accentColor="#10B981"
+          />
+          <TestCard
+            href="/coin"
+            image="/dotImg/coin/coin.png"
+            spriteConfig={{
+              width: 50,
+              height: 50,
+              bgSize: "400px 50px",
+              bgPosition: "0 0",
+            }}
+            title="동전 던지기"
+            description="앞면? 뒷면? 연속으로 맞춰봐!"
+            accentColor="#FFD700"
           />
         </div>
 

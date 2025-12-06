@@ -24,14 +24,14 @@ export const metadata: Metadata = {
     default: "운빨 - 운빨로 놀자!",
     template: "%s | 운빨",
   },
-  description: "주사위 굴리기, 폭탄 피하기, 강화 시뮬레이터, AI 가위바위보까지! 다양한 운빨 게임으로 오늘의 운을 테스트해보세요.",
-  keywords: ["운빨", "운 테스트", "가위바위보", "주사위", "폭탄 피하기", "강화 시뮬레이터", "운세", "럭키 게임", "미니게임"],
+  description: "주사위 굴리기, 폭탄 피하기, 강화 시뮬레이터, AI 가위바위보, 동전 던지기까지! 다양한 운빨 게임으로 오늘의 운을 테스트해보세요.",
+  keywords: ["운빨", "운 테스트", "가위바위보", "주사위", "폭탄 피하기", "강화 시뮬레이터", "동전 던지기", "운세", "럭키 게임", "미니게임"],
   authors: [{ name: "운빨" }],
   creator: "운빨",
   metadataBase: new URL("https://unbbal.site"),
   openGraph: {
     title: "운빨 - 운빨로 놀자!",
-    description: "주사위 굴리기, 폭탄 피하기, 강화 시뮬레이터, AI 가위바위보까지! 다양한 운빨 게임으로 오늘의 운을 테스트해보세요.",
+    description: "주사위 굴리기, 폭탄 피하기, 강화 시뮬레이터, AI 가위바위보, 동전 던지기까지! 다양한 운빨 게임으로 오늘의 운을 테스트해보세요.",
     url: "https://unbbal.site",
     siteName: "운빨",
     locale: "ko_KR",
@@ -50,6 +50,10 @@ export const metadata: Metadata = {
     title: "운빨 - 운빨로 놀자!",
     description: "주사위, 폭탄 피하기, 강화, AI 가위바위보로 운빨 테스트!",
     images: ["/og-image.png"],
+  },
+  icons: {
+    icon: "/favicon.png",
+    apple: "/favicon.png",
   },
   robots: {
     index: true,

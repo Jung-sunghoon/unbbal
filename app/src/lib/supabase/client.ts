@@ -8,7 +8,7 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // 타입 정의
-export type GameType = "dice" | "bomb" | "enhance" | "rps";
+export type GameType = "dice" | "bomb" | "enhance" | "rps" | "coin";
 
 export interface GameResult {
   id: string;
