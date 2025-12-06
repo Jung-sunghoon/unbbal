@@ -2,8 +2,9 @@
 
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -45,14 +46,29 @@ interface RPSResultContentProps {
 }
 
 export function RPSResultContent({ streak }: RPSResultContentProps) {
+  const router = useRouter();
+  const [isValid, setIsValid] = useState(false);
   const grade = getStreakGrade(streak);
   const message = getStreakMessage(streak);
   const aiReaction = getAIReaction(streak);
   const { bestRecord, isNewRecord, updateRecord } = useBestRecord("rps");
 
+  // 직접 URL 접근 방지
   useEffect(() => {
-    updateRecord(streak);
-  }, [streak, updateRecord]);
+    const completed = sessionStorage.getItem("rps_completed");
+    if (!completed) {
+      router.replace("/rps");
+      return;
+    }
+    sessionStorage.removeItem("rps_completed");
+    setIsValid(true);
+  }, [router]);
+
+  useEffect(() => {
+    if (isValid) updateRecord(streak);
+  }, [streak, updateRecord, isValid]);
+
+  if (!isValid) return null;
 
   const shareUrl = `https://unbbal.site/rps/result?streak=${streak}`;
   const shareText = `AI 가위바위보 ${streak}연승 달성! - ${grade.title}`;

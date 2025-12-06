@@ -64,6 +64,7 @@ export default function BombPage() {
   useEffect(() => {
     if (gamePhase === "gameover") {
       const timer = setTimeout(() => {
+        sessionStorage.setItem("bomb_completed", "true");
         router.push(`/bomb/result?survival=${survivalCount}`);
       }, 2500);
       return () => clearTimeout(timer);

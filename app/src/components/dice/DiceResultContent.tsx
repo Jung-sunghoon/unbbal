@@ -2,8 +2,9 @@
 
 "use client";
 
-import { useMemo, useEffect } from "react";
+import { useMemo, useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,12 +28,27 @@ interface DiceResultContentProps {
 }
 
 export function DiceResultContent({ sum, rolls }: DiceResultContentProps) {
+  const router = useRouter();
+  const [isValid, setIsValid] = useState(false);
   const grade = getDiceGrade(sum);
   const { bestRecord, isNewRecord, updateRecord } = useBestRecord("dice");
 
+  // 직접 URL 접근 방지
   useEffect(() => {
-    updateRecord(sum);
-  }, [sum, updateRecord]);
+    const completed = sessionStorage.getItem("dice_completed");
+    if (!completed) {
+      router.replace("/dice");
+      return;
+    }
+    sessionStorage.removeItem("dice_completed");
+    setIsValid(true);
+  }, [router]);
+
+  useEffect(() => {
+    if (isValid) updateRecord(sum);
+  }, [sum, updateRecord, isValid]);
+
+  if (!isValid) return null;
 
   const message = useMemo(() => {
     const messages = DICE_MESSAGES[grade.grade] || [];

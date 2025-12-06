@@ -2,8 +2,9 @@
 
 "use client";
 
-import { useMemo, useEffect } from "react";
+import { useMemo, useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,13 +27,28 @@ interface BombResultContentProps {
 }
 
 export function BombResultContent({ survival }: BombResultContentProps) {
+  const router = useRouter();
+  const [isValid, setIsValid] = useState(false);
   const grade = getBombGrade(survival);
   const { bestRecord, isNewRecord, updateRecord } = useBestRecord("bomb");
 
+  // 직접 URL 접근 방지
+  useEffect(() => {
+    const completed = sessionStorage.getItem("bomb_completed");
+    if (!completed) {
+      router.replace("/bomb");
+      return;
+    }
+    sessionStorage.removeItem("bomb_completed");
+    setIsValid(true);
+  }, [router]);
+
   // 기록 업데이트
   useEffect(() => {
-    updateRecord(survival);
-  }, [survival, updateRecord]);
+    if (isValid) updateRecord(survival);
+  }, [survival, updateRecord, isValid]);
+
+  if (!isValid) return null;
 
   const message = useMemo(() => {
     const messages = BOMB_MESSAGES[grade.grade] || [];

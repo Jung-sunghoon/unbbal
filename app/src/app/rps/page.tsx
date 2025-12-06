@@ -34,6 +34,7 @@ export default function RPSPage() {
     if (phase === "gameover") {
       shake("medium");
       const timer = setTimeout(() => {
+        sessionStorage.setItem("rps_completed", "true");
         router.push(`/rps/result?streak=${streak}`);
       }, 2000);
       return () => clearTimeout(timer);

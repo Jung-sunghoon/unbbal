@@ -2,8 +2,9 @@
 
 "use client";
 
-import { useMemo, useEffect } from "react";
+import { useMemo, useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -37,12 +38,27 @@ interface EnhanceResultContentProps {
 }
 
 export function EnhanceResultContent({ level, attempts }: EnhanceResultContentProps) {
+  const router = useRouter();
+  const [isValid, setIsValid] = useState(false);
   const grade = getEnhanceGrade(level);
   const { bestRecord, isNewRecord, updateRecord } = useBestRecord("enhance");
 
+  // 직접 URL 접근 방지
   useEffect(() => {
-    updateRecord(level);
-  }, [level, updateRecord]);
+    const completed = sessionStorage.getItem("enhance_completed");
+    if (!completed) {
+      router.replace("/enhance");
+      return;
+    }
+    sessionStorage.removeItem("enhance_completed");
+    setIsValid(true);
+  }, [router]);
+
+  useEffect(() => {
+    if (isValid) updateRecord(level);
+  }, [level, updateRecord, isValid]);
+
+  if (!isValid) return null;
 
   const message = useMemo(() => {
     const messages = ENHANCE_MESSAGES[grade.grade] || [];

@@ -44,6 +44,7 @@ export default function EnhancePage() {
     if (gamePhase === "ending") {
       const delay = phase === "destroyed" ? 2000 : 500;
       const timer = setTimeout(() => {
+        sessionStorage.setItem("enhance_completed", "true");
         router.push(`/enhance/result?level=${maxLevel}&attempts=${attemptCount}`);
       }, delay);
       return () => clearTimeout(timer);

@@ -24,6 +24,7 @@ export default function DicePage() {
   const handleComplete = useCallback(() => {
     // 애니메이션 끝난 후 1.5초 뒤 결과 페이지로 이동
     setTimeout(() => {
+      sessionStorage.setItem("dice_completed", "true");
       router.push(`/dice/result?sum=${sum}&rolls=${rolls.join(",")}`);
     }, 1500);
   }, [router, sum, rolls]);
