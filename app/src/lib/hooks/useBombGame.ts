@@ -10,6 +10,7 @@ export interface BoxState {
   id: number;
   isOpened: boolean;
   hasBomb: boolean;
+  isHinted: boolean; // 힌트로 표시된 안전한 폭탄
 }
 
 export interface BombGameState {
@@ -18,6 +19,8 @@ export interface BombGameState {
   survivalCount: number;
   selectedBox: number | null;
   bombCount: number;
+  hintUsed: boolean; // 힌트 사용 여부 (게임당 1회)
+  hintAvailable: boolean; // 현재 라운드에서 힌트 사용 가능 여부
 }
 
 // 라운드에 따른 폭탄 개수 계산 (5라운드마다 +1, 최대 4개)
@@ -36,6 +39,7 @@ function createBoxes(bombCount: number = 1): BoxState[] {
     id: i,
     isOpened: false,
     hasBomb: bombIndices.has(i),
+    isHinted: false,
   }));
 }
 
@@ -46,6 +50,8 @@ export function useBombGame() {
     survivalCount: 0,
     selectedBox: null,
     bombCount: 1,
+    hintUsed: false,
+    hintAvailable: true,
   });
 
   const startGame = useCallback(() => {
@@ -55,6 +61,8 @@ export function useBombGame() {
       survivalCount: 0,
       selectedBox: null,
       bombCount: 1,
+      hintUsed: false,
+      hintAvailable: true,
     });
   }, []);
 
@@ -109,8 +117,30 @@ export function useBombGame() {
       boxes: createBoxes(newBombCount),
       selectedBox: null,
       bombCount: newBombCount,
+      hintAvailable: !prev.hintUsed, // 이미 사용했으면 비활성화
     }));
   }, [state.phase, state.survivalCount]);
+
+  // 힌트 사용: 안전한 폭탄 하나를 표시
+  const useHint = useCallback(() => {
+    if (state.phase !== "playing" || state.hintUsed) return;
+
+    // 열리지 않은 안전한 폭탄 찾기
+    const safeBoxes = state.boxes.filter(b => !b.isOpened && !b.hasBomb && !b.isHinted);
+    if (safeBoxes.length === 0) return;
+
+    // 랜덤으로 하나 선택
+    const hintBox = safeBoxes[Math.floor(Math.random() * safeBoxes.length)];
+
+    setState(prev => ({
+      ...prev,
+      hintUsed: true,
+      hintAvailable: false,
+      boxes: prev.boxes.map(b =>
+        b.id === hintBox.id ? { ...b, isHinted: true } : b
+      ),
+    }));
+  }, [state.phase, state.hintUsed, state.boxes]);
 
   const resetGame = useCallback(() => {
     setState({
@@ -119,6 +149,8 @@ export function useBombGame() {
       survivalCount: 0,
       selectedBox: null,
       bombCount: 1,
+      hintUsed: false,
+      hintAvailable: true,
     });
   }, []);
 
@@ -128,6 +160,7 @@ export function useBombGame() {
     selectBox,
     confirmResult,
     nextRound,
+    useHint,
     resetGame,
   };
 }

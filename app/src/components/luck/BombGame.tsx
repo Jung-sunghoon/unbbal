@@ -15,9 +15,12 @@ interface BombGameProps {
   survivalCount: number;
   selectedBox: number | null;
   bombCount: number;
+  hintUsed: boolean;
+  hintAvailable: boolean;
   onSelectBox: (id: number) => void;
   onRevealComplete: () => void;
   onNextRound: () => void;
+  onUseHint: () => void;
 }
 
 export function BombGame({
@@ -26,9 +29,12 @@ export function BombGame({
   survivalCount,
   selectedBox,
   bombCount,
+  hintUsed,
+  hintAvailable,
   onSelectBox,
   onRevealComplete,
   onNextRound,
+  onUseHint,
 }: BombGameProps) {
   const isSafe = phase === "safe";
   const isExploded = phase === "exploded";
@@ -145,6 +151,31 @@ export function BombGame({
           onSelectBox={onSelectBox}
           onRevealComplete={handleRevealComplete}
         />
+
+        {/* 힌트 버튼 */}
+        {phase === "playing" && (
+          <div className="mt-4 text-center">
+            {hintAvailable ? (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+              >
+                <Button
+                  onClick={onUseHint}
+                  variant="outline"
+                  size="sm"
+                  className="text-amber-600 border-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20"
+                >
+                  💡 힌트 사용 (1회)
+                </Button>
+              </motion.div>
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                {hintUsed ? "💡 힌트를 이미 사용했어요" : ""}
+              </p>
+            )}
+          </div>
+        )}
 
         {/* 다음 라운드 버튼 */}
         <div className="mt-4 h-12">

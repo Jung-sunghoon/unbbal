@@ -7,12 +7,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { DicePixel } from "./DicePixel";
+import type { DiceRollInfo } from "@/lib/hooks/useDiceGame";
 
 interface DiceRollProps {
   rollCount: number;
+  baseRollCount: number;
   currentRoll: number;
   totalSum: number;
-  rolls: number[];
+  rolls: DiceRollInfo[];
+  bonusCount: number;
+  isBonusRoll: boolean;
   onRoll: () => void;
   onComplete?: () => void;
 }
@@ -27,20 +31,23 @@ function getRollReaction(value: number): { emoji: string; text: string; color: s
   return { emoji: "💀", text: "으악", color: "#DC143C" };
 }
 
-export function DiceRoll({ rollCount, currentRoll, totalSum, rolls, onRoll, onComplete }: DiceRollProps) {
+export function DiceRoll({ rollCount, baseRollCount, currentRoll, totalSum, rolls, bonusCount, isBonusRoll, onRoll, onComplete }: DiceRollProps) {
   const [isRolling, setIsRolling] = useState(false);
   const [displaySum, setDisplaySum] = useState(0);
-  const [floatingNumber, setFloatingNumber] = useState<{ value: number; key: number } | null>(null);
+  const [floatingNumber, setFloatingNumber] = useState<{ value: number; key: number; isBonus?: boolean } | null>(null);
   const [showReaction, setShowReaction] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
+  const [showBonusGain, setShowBonusGain] = useState(false);
   const prevRollRef = useRef(0);
   const keyRef = useRef(0);
-  const isComplete = rollCount >= 10;
+  const isBaseComplete = baseRollCount >= 10;
+  const isComplete = isBaseComplete && bonusCount === 0;
 
   const handleRoll = useCallback(() => {
     if (isRolling) return;
     setIsRolling(true);
     setShowReaction(false);
+    setShowBonusGain(false);
     onRoll();
   }, [isRolling, onRoll]);
 
@@ -74,21 +81,26 @@ export function DiceRoll({ rollCount, currentRoll, totalSum, rolls, onRoll, onCo
     setIsRolling(false);
     setDisplaySum(totalSum);
     keyRef.current += 1;
-    setFloatingNumber({ value: currentRoll, key: keyRef.current });
+    setFloatingNumber({ value: currentRoll, key: keyRef.current, isBonus: isBonusRoll });
     setShowReaction(true);
 
-    // 10회 완료 후 애니메이션까지 끝나면 완료 처리
-    if (rollCount >= 10) {
+    // 6이 나오면 보너스 획득 알림 표시
+    if (currentRoll === 6) {
+      setShowBonusGain(true);
+    }
+
+    // 기본 10회 완료 + 보너스 없음이면 게임 완료
+    if (isComplete) {
       setIsFinished(true);
       onComplete?.();
     }
-  }, [totalSum, currentRoll, rollCount, onComplete]);
+  }, [totalSum, currentRoll, isBonusRoll, isComplete, onComplete]);
 
   const reaction = getRollReaction(currentRoll);
-  const progress = (rollCount / 10) * 100;
+  const progress = Math.min((baseRollCount / 10) * 100, 100);
 
-  // 평균 계산 (35가 기대값)
-  const average = rollCount > 0 ? (totalSum / rollCount).toFixed(1) : "0";
+  // 평균 계산 (35가 기대값, 기본 10회 기준)
+  const average = baseRollCount > 0 ? (totalSum / rollCount).toFixed(1) : "0";
   const isAboveAverage = rollCount > 0 && totalSum / rollCount > 3.5;
 
   return (
@@ -98,7 +110,18 @@ export function DiceRoll({ rollCount, currentRoll, totalSum, rolls, onRoll, onCo
         <div className="mb-6">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm font-medium">진행률</span>
-            <span className="text-sm text-muted-foreground">{rollCount}/10</span>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">{baseRollCount}/10</span>
+              {bonusCount > 0 && (
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="text-sm font-medium text-amber-500"
+                >
+                  +{bonusCount} 보너스
+                </motion.span>
+              )}
+            </div>
           </div>
           <div className="h-2 bg-muted rounded-full overflow-hidden">
             <motion.div
@@ -109,6 +132,22 @@ export function DiceRoll({ rollCount, currentRoll, totalSum, rolls, onRoll, onCo
             />
           </div>
         </div>
+
+        {/* 보너스 획득 알림 */}
+        <AnimatePresence>
+          {showBonusGain && !isRolling && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="mb-4 p-2 rounded-lg bg-amber-100 dark:bg-amber-900/30 text-center"
+            >
+              <span className="text-sm font-medium text-amber-700 dark:text-amber-400">
+                🎁 보너스 굴림 획득!
+              </span>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* 픽셀아트 주사위 */}
         <div className="h-44 flex items-center justify-center relative overflow-visible">
@@ -277,19 +316,22 @@ export function DiceRoll({ rollCount, currentRoll, totalSum, rolls, onRoll, onCo
         {/* 히스토리 (미니 주사위) - 롤링 중에는 마지막 값 숨김 */}
         {rolls.length > 0 && (
           <div className="flex justify-center gap-1 mb-6 flex-wrap">
-            {(isRolling ? rolls.slice(0, -1) : rolls).map((roll, i) => (
+            {(isRolling ? rolls.slice(0, -1) : rolls).map((rollInfo, i) => (
               <motion.div
                 key={i}
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: i * 0.05 }}
-                className={`w-7 h-7 rounded flex items-center justify-center text-xs font-bold ${
-                  roll >= 5 ? "bg-[var(--luck-primary)] text-white" :
-                  roll <= 2 ? "bg-red-100 text-red-600" :
+                className={`w-7 h-7 rounded flex items-center justify-center text-xs font-bold relative ${
+                  rollInfo.value >= 5 ? "bg-[var(--luck-primary)] text-white" :
+                  rollInfo.value <= 2 ? "bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400" :
                   "bg-muted"
-                }`}
+                } ${rollInfo.isBonus ? "ring-2 ring-amber-400" : ""}`}
               >
-                {roll}
+                {rollInfo.value}
+                {rollInfo.isBonus && (
+                  <span className="absolute -top-1 -right-1 text-[8px]">⭐</span>
+                )}
               </motion.div>
             ))}
           </div>
@@ -306,7 +348,11 @@ export function DiceRoll({ rollCount, currentRoll, totalSum, rolls, onRoll, onCo
                 onClick={handleRoll}
                 disabled={isRolling || isComplete}
                 size="lg"
-                className="w-full bg-[var(--luck-primary)] hover:bg-[var(--luck-primary)]/90 hover:shadow-lg transition-all duration-200"
+                className={`w-full transition-all duration-200 ${
+                  isBaseComplete && bonusCount > 0
+                    ? "bg-amber-500 hover:bg-amber-600 hover:shadow-lg"
+                    : "bg-[var(--luck-primary)] hover:bg-[var(--luck-primary)]/90 hover:shadow-lg"
+                }`}
               >
                 {isRolling ? (
                   <span className="flex items-center gap-2">
@@ -318,8 +364,10 @@ export function DiceRoll({ rollCount, currentRoll, totalSum, rolls, onRoll, onCo
                     </motion.span>
                     굴리는 중...
                   </span>
+                ) : isBaseComplete && bonusCount > 0 ? (
+                  `⭐ 보너스 굴리기 (${bonusCount}회)`
                 ) : (
-                  `굴리기 (${10 - rollCount}회 남음)`
+                  `굴리기 (${10 - baseRollCount}회 남음)`
                 )}
               </Button>
             </motion.div>
@@ -329,7 +377,7 @@ export function DiceRoll({ rollCount, currentRoll, totalSum, rolls, onRoll, onCo
               animate={{ opacity: 1, y: 0 }}
               className="text-center"
             >
-              <p className="text-lg font-bold text-green-600">
+              <p className="text-lg font-bold text-green-600 dark:text-green-400">
                 🎉 완료! 결과 확인 중...
               </p>
             </motion.div>

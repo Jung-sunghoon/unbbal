@@ -9,6 +9,20 @@ export const metadata: Metadata = {
     title: "폭탄 피하기 | 운빨",
     description: "6개 상자 중 폭탄을 피해라! 몇 번 연속 생존할 수 있을까?",
     url: "https://unbbal.site/bomb",
+    images: [
+      {
+        url: "https://unbbal.site/api/og/game?game=bomb",
+        width: 1200,
+        height: 630,
+        alt: "폭탄 피하기",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "폭탄 피하기 | 운빨",
+    description: "6개 상자 중 폭탄을 피해라! 몇 번 연속 생존할 수 있을까?",
+    images: ["https://unbbal.site/api/og/game?game=bomb"],
   },
 };
 

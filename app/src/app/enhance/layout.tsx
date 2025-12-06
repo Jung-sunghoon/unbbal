@@ -9,6 +9,20 @@ export const metadata: Metadata = {
     title: "강화 시뮬레이터 | 운빨",
     description: "아이템을 몇 강까지 올릴 수 있을까? +7부터 파괴 확률!",
     url: "https://unbbal.site/enhance",
+    images: [
+      {
+        url: "https://unbbal.site/api/og/game?game=enhance",
+        width: 1200,
+        height: 630,
+        alt: "강화 시뮬레이터",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "강화 시뮬레이터 | 운빨",
+    description: "아이템을 몇 강까지 올릴 수 있을까? +7부터 파괴 확률!",
+    images: ["https://unbbal.site/api/og/game?game=enhance"],
   },
 };
 

@@ -27,6 +27,7 @@ interface SingleBombProps {
   id: number;
   isOpened: boolean;
   hasBomb: boolean;
+  isHinted: boolean;
   isSelected: boolean;
   isRevealing: boolean;
   canSelect: boolean;
@@ -40,6 +41,7 @@ function SingleBomb({
   id,
   isOpened,
   hasBomb,
+  isHinted,
   isSelected,
   isRevealing,
   canSelect,
@@ -182,9 +184,25 @@ function SingleBomb({
       )}
 
 
+      {/* 힌트 표시 (안전!) */}
+      {isHinted && !isOpened && (
+        <motion.div
+          className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none"
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ type: "spring", damping: 10 }}
+        >
+          <span className="text-2xl font-bold text-green-500 bg-green-100/90 dark:bg-green-900/80 px-3 py-1 rounded-lg border-2 border-green-400">
+            ✓ 안전
+          </span>
+        </motion.div>
+      )}
+
       {/* 번호 표시 */}
       {!isOpened && (
-        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-background/80 px-2 py-0.5 rounded text-xs font-bold">
+        <div className={`absolute -bottom-2 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded text-xs font-bold ${
+          isHinted ? "bg-green-100 dark:bg-green-900/50 text-green-600" : "bg-background/80"
+        }`}>
           {id + 1}
         </div>
       )}
@@ -212,6 +230,7 @@ export function BombPixel({
             id={box.id}
             isOpened={box.isOpened}
             hasBomb={box.hasBomb}
+            isHinted={box.isHinted}
             isSelected={selectedBox === box.id}
             isRevealing={isRevealing && selectedBox === box.id}
             canSelect={canSelect}

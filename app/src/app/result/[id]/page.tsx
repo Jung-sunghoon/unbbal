@@ -69,6 +69,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const title = `${emoji} ${grade.grade} (${grade.title}) | ${gameTitle}`;
   const description = `${gameTitle} 결과: ${grade.grade} 등급 - 점수 ${data.score}`;
 
+  // RPS는 별도 OG 라우트 사용
+  const ogUrl = gameType === "rps"
+    ? `https://unbbal.site/api/og/rps?streak=${data.score}&fire=${data.metadata?.fireCount || 0}`
+    : `https://unbbal.site/api/og/luck?game=${gameType}&grade=${grade.grade}&title=${encodeURIComponent(grade.title)}&score=${data.score}`;
+
   return {
     title,
     description,
@@ -78,7 +83,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       url: `https://unbbal.site/result/${id}`,
       images: [
         {
-          url: `https://unbbal.site/api/og/luck?grade=${grade.grade}&title=${encodeURIComponent(grade.title)}&score=${data.score}`,
+          url: ogUrl,
           width: 1200,
           height: 630,
           alt: `${gameTitle} 결과: ${grade.grade}`,
@@ -89,6 +94,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       card: "summary_large_image",
       title: `${gameTitle} 결과: ${grade.grade}`,
       description,
+      images: [ogUrl],
     },
   };
 }

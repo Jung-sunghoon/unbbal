@@ -46,10 +46,13 @@ export default function BombPage() {
     survivalCount,
     selectedBox,
     bombCount,
+    hintUsed,
+    hintAvailable,
     startGame,
     selectBox,
     confirmResult,
     nextRound,
+    useHint,
   } = useBombGame();
 
   // 폭발시 phase 변경 + 화면 흔들림
@@ -132,8 +135,8 @@ export default function BombPage() {
                   5라운드마다 진짜 폭탄 +1 (최대 4개)
                 </li>
                 <li className="flex items-center gap-2">
-                  <span>💥</span>
-                  진짜 폭탄을 고르면 펑!
+                  <span>💡</span>
+                  <span className="text-amber-600 dark:text-amber-400">게임당 1회 힌트 사용 가능!</span>
                 </li>
               </ul>
               <div className="mt-4 pt-3 border-t border-border">
@@ -167,9 +170,12 @@ export default function BombPage() {
             survivalCount={survivalCount}
             selectedBox={selectedBox}
             bombCount={bombCount}
+            hintUsed={hintUsed}
+            hintAvailable={hintAvailable}
             onSelectBox={selectBox}
             onRevealComplete={confirmResult}
             onNextRound={nextRound}
+            onUseHint={useHint}
           />
         )}
 
@@ -186,9 +192,12 @@ export default function BombPage() {
               survivalCount={survivalCount}
               selectedBox={selectedBox}
               bombCount={bombCount}
+              hintUsed={hintUsed}
+              hintAvailable={false}
               onSelectBox={() => {}}
               onRevealComplete={() => {}}
               onNextRound={() => {}}
+              onUseHint={() => {}}
             />
             <motion.div
               initial={{ scale: 0 }}

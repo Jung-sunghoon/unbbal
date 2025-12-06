@@ -7,33 +7,38 @@ export const runtime = "edge";
 
 type GameType = "dice" | "bomb" | "enhance" | "rps";
 
-const GAME_INFO: Record<GameType, { emoji: string; name: string; bgColor: string; scoreLabel: string }> = {
-  dice: { emoji: "🎲", name: "주사위 굴리기", bgColor: "#FEF3C7", scoreLabel: "점" },
-  bomb: { emoji: "💣", name: "폭탄 피하기", bgColor: "#FEE2E2", scoreLabel: "회 생존" },
-  enhance: { emoji: "⚔️", name: "강화 시뮬레이터", bgColor: "#F3E8FF", scoreLabel: "강" },
-  rps: { emoji: "✊", name: "AI 가위바위보", bgColor: "#D1FAE5", scoreLabel: "연승" },
-};
-
-const GRADE_COLORS: Record<string, string> = {
-  LEGEND: "#FF00FF",
-  EX: "#00FFFF",
-  SSS: "#FFD700",
-  SS: "#FFA500",
-  S: "#32CD32",
-  A: "#4169E1",
-  B: "#9370DB",
-  F: "#DC143C",
+const GAME_INFO: Record<GameType, { emoji: string; name: string; bgColor: string; description: string }> = {
+  dice: {
+    emoji: "🎲",
+    name: "주사위 굴리기",
+    bgColor: "#FEF3C7",
+    description: "10번 굴려서 운빨 측정!",
+  },
+  bomb: {
+    emoji: "💣",
+    name: "폭탄 피하기",
+    bgColor: "#FEE2E2",
+    description: "진짜 폭탄을 피해라!",
+  },
+  enhance: {
+    emoji: "⚔️",
+    name: "강화 시뮬레이터",
+    bgColor: "#F3E8FF",
+    description: "몇 강까지 갈 수 있을까?",
+  },
+  rps: {
+    emoji: "✊",
+    name: "AI 가위바위보",
+    bgColor: "#D1FAE5",
+    description: "AI 상대로 연승 도전!",
+  },
 };
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const gameType = (searchParams.get("game") || "dice") as GameType;
-  const grade = searchParams.get("grade") || "A";
-  const title = searchParams.get("title") || "평범";
-  const score = searchParams.get("score") || "0";
 
   const game = GAME_INFO[gameType] || GAME_INFO.dice;
-  const color = GRADE_COLORS[grade] || "#4169E1";
 
   return new ImageResponse(
     (
@@ -65,56 +70,36 @@ export async function GET(request: NextRequest) {
           <span style={{ fontSize: 32, fontWeight: 700, color: "#374151" }}>운빨</span>
         </div>
 
-        {/* 게임 타입 */}
+        {/* 게임 이모지 */}
         <div
           style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 16,
+            fontSize: 120,
             marginBottom: 24,
           }}
         >
-          <span style={{ fontSize: 64 }}>{game.emoji}</span>
-          <span style={{ fontSize: 36, fontWeight: 600, color: "#374151" }}>{game.name}</span>
+          {game.emoji}
         </div>
 
-        {/* 등급 */}
+        {/* 게임 이름 */}
         <div
           style={{
-            fontSize: 160,
+            fontSize: 64,
             fontWeight: 900,
-            color: color,
-            lineHeight: 1,
-            textShadow: "4px 4px 0px rgba(0,0,0,0.1)",
+            color: "#1F2937",
+            marginBottom: 16,
           }}
         >
-          {grade}
+          {game.name}
         </div>
 
-        {/* 타이틀 */}
+        {/* 설명 */}
         <div
           style={{
-            fontSize: 48,
-            fontWeight: 700,
-            color: color,
-            marginTop: 8,
-          }}
-        >
-          {title}
-        </div>
-
-        {/* 점수 */}
-        <div
-          style={{
-            fontSize: 40,
+            fontSize: 36,
             color: "#6B7280",
-            marginTop: 24,
-            padding: "12px 32px",
-            backgroundColor: "rgba(255,255,255,0.7)",
-            borderRadius: 12,
           }}
         >
-          {gameType === "enhance" ? `+${score}` : score}{game.scoreLabel}
+          {game.description}
         </div>
 
         {/* 하단 URL */}

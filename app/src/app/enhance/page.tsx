@@ -22,8 +22,11 @@ export default function EnhancePage() {
     level,
     maxLevel,
     attemptCount,
+    failStack,
+    maxFailStack,
     lastResult,
     rates,
+    stackBonus,
     startGame,
     enhance,
     confirmResult,
@@ -54,6 +57,7 @@ export default function EnhancePage() {
               score: maxLevel,
               metadata: {
                 attempts: attemptCount,
+                maxFailStack: maxFailStack,
                 cumulativeProbability: calculateCumulativeProbability(maxLevel),
               },
             }),
@@ -68,7 +72,7 @@ export default function EnhancePage() {
       }, delay);
       return () => clearTimeout(timer);
     }
-  }, [gamePhase, phase, maxLevel, attemptCount, router]);
+  }, [gamePhase, phase, maxLevel, attemptCount, maxFailStack, router]);
 
   const handleStart = () => {
     startGame();
@@ -125,10 +129,14 @@ export default function EnhancePage() {
                   <span>💥</span>
                   <span className="text-red-400">+7부터 파괴 확률 등장!</span>
                 </li>
+                <li className="flex items-center gap-2">
+                  <span>🔥</span>
+                  <span className="text-orange-400">실패마다 성공률 +2% (최대 +20%)</span>
+                </li>
               </ul>
               <div className="mt-4 pt-3 border-t border-border">
                 <p className="text-xs text-center text-muted-foreground">
-                  언제든 멈출 수 있어요. 욕심부리다 터질 수도!
+                  천장 시스템: 연속 실패하면 성공률이 올라가요!
                 </p>
               </div>
             </div>
@@ -176,8 +184,10 @@ export default function EnhancePage() {
             level={level}
             maxLevel={maxLevel}
             attemptCount={attemptCount}
+            failStack={failStack}
             lastResult={lastResult}
             rates={rates}
+            stackBonus={stackBonus}
             onEnhance={enhance}
             onConfirm={confirmResult}
             onStop={stopGame}
@@ -196,8 +206,10 @@ export default function EnhancePage() {
               level={level}
               maxLevel={maxLevel}
               attemptCount={attemptCount}
+              failStack={failStack}
               lastResult={lastResult}
               rates={rates}
+              stackBonus={stackBonus}
               onEnhance={() => {}}
               onConfirm={() => {}}
               onStop={() => {}}

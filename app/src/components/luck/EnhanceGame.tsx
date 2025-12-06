@@ -13,8 +13,10 @@ interface EnhanceGameProps {
   level: number;
   maxLevel: number;
   attemptCount: number;
+  failStack: number;
   lastResult: EnhanceResult | null;
   rates: { success: number; fail: number; destroy: number };
+  stackBonus: number;
   onEnhance: () => void;
   onConfirm: () => void;
   onStop: () => void;
@@ -35,8 +37,10 @@ export function EnhanceGame({
   level,
   maxLevel,
   attemptCount,
+  failStack,
   lastResult,
   rates,
+  stackBonus,
   onEnhance,
   onConfirm,
   onStop,
@@ -134,12 +138,29 @@ export function EnhanceGame({
               +{level} → +{level + 1} 강화 확률
             </p>
             <div className="flex justify-center gap-4 text-sm">
-              <span className="text-green-500">성공 {rates.success}%</span>
+              <span className="text-green-500">
+                성공 {rates.success}%
+                {stackBonus > 0 && (
+                  <span className="text-xs text-green-400"> (+{stackBonus})</span>
+                )}
+              </span>
               <span className="text-yellow-500">실패 {rates.fail}%</span>
               {rates.destroy > 0 && (
                 <span className="text-red-500">파괴 {rates.destroy}%</span>
               )}
             </div>
+            {/* 스택 표시 */}
+            {failStack > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-2 pt-2 border-t border-border"
+              >
+                <p className="text-xs text-center text-orange-400">
+                  🔥 연속 실패 스택: {failStack}/10 (성공률 +{stackBonus}%)
+                </p>
+              </motion.div>
+            )}
             {level >= 7 && (
               <p className="text-xs text-center text-red-400 mt-2">
                 ⚠️ 파괴 시 게임 오버!

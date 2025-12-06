@@ -14,7 +14,7 @@ import { useDiceGame } from "@/lib/hooks/useDiceGame";
 export default function DicePage() {
   const router = useRouter();
   const [phase, setPhase] = useState<"intro" | "playing">("intro");
-  const { rolls, rollCount, currentRoll, sum, roll, reset } = useDiceGame();
+  const { rolls, rollCount, baseRollCount, currentRoll, sum, bonusCount, isBonusRoll, totalBonusUsed, isComplete, roll, reset } = useDiceGame();
 
   const handleStart = () => {
     reset();
@@ -31,7 +31,10 @@ export default function DicePage() {
           body: JSON.stringify({
             gameType: "dice",
             score: sum,
-            metadata: { rolls },
+            metadata: {
+              rolls: rolls.map(r => r.value),
+              bonusRolls: totalBonusUsed,
+            },
           }),
         });
         const data = await res.json();
@@ -42,7 +45,7 @@ export default function DicePage() {
         console.error("Failed to save result:", error);
       }
     }, 1500);
-  }, [router, sum, rolls]);
+  }, [router, sum, rolls, totalBonusUsed]);
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -84,8 +87,8 @@ export default function DicePage() {
                   나온 숫자의 합계로 등급 결정
                 </li>
                 <li className="flex items-center gap-2">
-                  <span>📊</span>
-                  평균: 35 / 최대: 60
+                  <span>⭐</span>
+                  <span className="text-amber-600 dark:text-amber-400">6이 나오면 보너스 굴림!</span>
                 </li>
               </ul>
               <div className="mt-4 pt-3 border-t border-border">
@@ -115,9 +118,12 @@ export default function DicePage() {
         {phase === "playing" && (
           <DiceRoll
             rollCount={rollCount}
+            baseRollCount={baseRollCount}
             currentRoll={currentRoll}
             totalSum={sum}
             rolls={rolls}
+            bonusCount={bonusCount}
+            isBonusRoll={isBonusRoll}
             onRoll={roll}
             onComplete={handleComplete}
           />
