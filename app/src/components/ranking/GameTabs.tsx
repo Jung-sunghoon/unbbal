@@ -25,7 +25,7 @@ export function GameTabs({ activeGame, onSelect }: GameTabsProps) {
           key={game.type}
           onClick={() => onSelect(game.type)}
           className={cn(
-            "flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors",
+            "flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors cursor-pointer",
             activeGame === game.type
               ? "bg-background shadow-sm"
               : "hover:bg-background/50"
